@@ -3,6 +3,7 @@ import { useUser } from '../user-context'
 import { StyleSheet, Text, View } from 'react-native'
 import { typeDef } from './register-task'
 import { usePalette } from '../config/palette'
+import { ensureArray } from '../lib/ensure-array'
 
 export const styles = StyleSheet.create({
     task: {
@@ -18,7 +19,9 @@ export const styles = StyleSheet.create({
         paddingLeft: 30,
         paddingRight: 30,
     },
-    descriptionText: {},
+    descriptionText: {
+        paddingBottom: 16,
+    },
     taskControls: {},
 })
 
@@ -30,6 +33,7 @@ export function Task({ task, ...props }) {
         return null
     }
     const Type = taskDef?.type || DefaultTask
+    const description = ensureArray(taskDef.desc)
     return (
         <View style={[basic.text, styles.task]}>
             {taskDef.image}
@@ -39,9 +43,15 @@ export function Task({ task, ...props }) {
                 </Text>
             </View>
             <View style={[basic.text, styles.description]}>
-                <Text style={[basic.text, styles.descriptionText]}>
-                    {taskDef.desc}
-                </Text>
+                {description.map((desc, i) => {
+                    return (
+                        <Text
+                            key={i}
+                            style={[basic.text, styles.descriptionText]}>
+                            {desc}
+                        </Text>
+                    )
+                })}
             </View>
 
             <Type user={user} task={task} def={taskDef} {...props} />

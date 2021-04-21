@@ -4,6 +4,8 @@ import firestore from '@react-native-firebase/firestore'
 import { raise, useLocalEvent } from './lib/local-events'
 import merge from 'lodash-es/merge'
 import { cloneDeep as clone, isEqual } from 'lodash-es'
+import { ensureArray } from './lib/ensure-array'
+import { typeDef } from './tasks/register-task'
 
 export const UserContext = React.createContext()
 
@@ -93,6 +95,12 @@ export function useUser() {
         completeTask(task) {
             let completed = (user.tasksCompleted = user.tasksCompleted || {})
             completed[task.id] = new Date()
+            const def = typeDef(task)
+            if (def.then) {
+                for (let then of ensureArray(def.then)) {
+                    then(user, task, def)
+                }
+            }
             return result.save()
         },
         save(additionalData = {}) {

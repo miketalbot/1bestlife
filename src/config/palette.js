@@ -10,7 +10,6 @@ export const palette = {
     },
     dark: {
         text: {
-            backgroundColor: '#0C0C0C',
             color: '#f3f3f3',
         },
         title: {
@@ -19,7 +18,6 @@ export const palette = {
     },
     light: {
         text: {
-            backgroundColor: '#fff',
             color: '#444',
         },
         title: {

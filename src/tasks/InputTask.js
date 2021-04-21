@@ -1,6 +1,7 @@
 import React from 'react'
-import { Button, TextInput } from 'react-native-paper'
+import { TextInput } from 'react-native-paper'
 import { StyleSheet, View } from 'react-native'
+import { TickButton } from '../lib/tick-button'
 
 const styles = StyleSheet.create({
     input: {
@@ -34,13 +35,10 @@ export function InputTask({
                 />
             </View>
             <View style={{ alignSelf: 'center', padding: 16 }}>
-                <Button
+                <TickButton
                     onPress={clicked}
                     disabled={value.length < minLength}
-                    icon="check"
-                    color="green">
-                    Done
-                </Button>
+                />
             </View>
         </View>
     )
