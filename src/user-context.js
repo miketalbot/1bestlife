@@ -95,6 +95,7 @@ export function useUser() {
         completeTask(task) {
             let completed = (user.tasksCompleted = user.tasksCompleted || {})
             completed[task.id] = new Date()
+            user.tasks = user.tasks.filter(t => t.id !== task.id)
             const def = typeDef(task)
             if (def.then) {
                 for (let then of ensureArray(def.then)) {

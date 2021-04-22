@@ -7,6 +7,14 @@ const styles = StyleSheet.create({
     input: {
         alignSelf: 'stretch',
     },
+    textInput: {
+        padding: 16,
+        alignSelf: 'stretch',
+    },
+    button: {
+        alignSelf: 'center',
+        padding: 16,
+    },
 })
 
 export function InputTask({
@@ -19,13 +27,10 @@ export function InputTask({
     ...props
 }) {
     const [value, setValue] = React.useState(defaultValue)
+    console.log('Type', value)
     return (
-        <View style={{ alignSelf: 'stretch' }}>
-            <View
-                style={{
-                    padding: 16,
-                    alignSelf: 'stretch',
-                }}>
+        <View style={styles.input}>
+            <View style={styles.textInput}>
                 <TextInput
                     style={styles.input}
                     label={label}
@@ -34,7 +39,7 @@ export function InputTask({
                     {...props}
                 />
             </View>
-            <View style={{ alignSelf: 'center', padding: 16 }}>
+            <View style={styles.button}>
                 <TickButton
                     onPress={clicked}
                     disabled={value.length < minLength}
@@ -45,6 +50,8 @@ export function InputTask({
 
     async function clicked() {
         user[field] = value
+        console.log(user[field], value, field)
+        user.save()
         await user.completeTask(task)
     }
 }

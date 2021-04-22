@@ -6,6 +6,7 @@ import { registerTask } from './register-task'
 import { StyleSheet } from 'react-native'
 import { willMakeTask } from './willMakeTask'
 import { animationWithRandomHold } from '../animations/clean'
+import { DoneTask } from './DoneTask'
 
 handle('get-tasks', applyDefaultTasks)
 
@@ -42,6 +43,7 @@ const greetTask = registerTask({
         "Right now I've setup some immediate goals to get your ready for the important stuff.",
         "You've actually completed your first goal by telling me your name!",
     ],
+    type: props => <DoneTask {...props} caption={''} />,
 })
 
 function applyDefaultTasks(user) {

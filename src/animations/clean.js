@@ -59,7 +59,9 @@ export function Lottie({
             function animateTo(from = 0, to = 1, delay = 0) {
                 progress.setValue(from)
                 promise = Defer()
-                let duration = Math.floor(1000 * ((to - from) * totalDuration))
+                let duration = Math.floor(
+                    1000 * (Math.abs(to - from) * totalDuration),
+                )
                 Animated.timing(progress, {
                     duration,
                     toValue: to,

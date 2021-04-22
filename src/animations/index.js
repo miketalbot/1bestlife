@@ -24,5 +24,5 @@ export function StarStrike(props) {
 }
 
 export function Tick(props) {
-    return <Lottie loop={true} source={require('./tick.json')} {...props} />
+    return <Lottie loop={false} source={require('./tick.json')} {...props} />
 }
