@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     title: {},
     titleText: {
         fontSize: 24,
-        fontWeight: '500',
+        fontWeight: '200',
         paddingBottom: 24,
     },
     description: {
@@ -20,7 +20,8 @@ export const styles = StyleSheet.create({
         paddingRight: 30,
     },
     descriptionText: {
-        paddingBottom: 16,
+        paddingBottom: 20,
+        fontSize: 16,
     },
     taskControls: {},
 })

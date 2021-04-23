@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import LottieView from 'lottie-react-native'
-import { Animated, Easing } from 'react-native'
+import { Animated, Dimensions, Easing } from 'react-native'
 import { Defer } from '../lib/defer'
 import { resolveAsFunction } from '../lib/resolve-as-function'
 
@@ -31,9 +31,30 @@ export function Lottie({
     source,
     autoPlay,
     loop,
+    width,
+    height,
+    style,
     steps = [{ from: 0, to: 1 }],
     ...props
 }) {
+    const additiveStyles = useMemo(() => {
+        let dimensionStyle = {}
+        if (width < 1) {
+            dimensionStyle.width = Math.floor(
+                Dimensions.get('window').width * width,
+            )
+        } else if (width) {
+            dimensionStyle.width = width
+        }
+        if (height < 1) {
+            dimensionStyle.height = Math.floor(
+                Dimensions.get('window').height * height,
+            )
+        } else if (width) {
+            dimensionStyle.height = height
+        }
+        return dimensionStyle
+    }, [width, height])
     const [progress] = useState(new Animated.Value(0))
     useEffect(() => {
         let terminated = false
@@ -76,7 +97,14 @@ export function Lottie({
         })()
         return () => (terminated = true)
     }, [loop, progress, source, steps])
-    return <LottieView progress={progress} source={clean(source)} {...props} />
+    return (
+        <LottieView
+            style={[style, additiveStyles]}
+            progress={progress}
+            source={clean(source)}
+            {...props}
+        />
+    )
 }
 
 export const animationWithRandomHold = [

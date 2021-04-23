@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { raise, useLocalEvent } from './lib/local-events'
+import { Mounted } from '../lib/Mounted'
+
+export const OverlayContext = React.createContext()
 
 const styles = StyleSheet.create({
     outer: {
@@ -8,9 +11,7 @@ const styles = StyleSheet.create({
         left: 0,
         top: 0,
         right: 0,
-        bottom: 0,
         width: '100%',
-        height: '100%',
     },
     smiler: {
         width: '100%',
@@ -24,14 +25,35 @@ export function setOverlay(overlay) {
 }
 
 export function Overlay() {
-    const [[overlay, key] = [], setLocalOverlay] = useState(() => [null, 0])
+    const [[overlay, key] = [], setLocalOverlay] = useState(() => [[], 0])
+    const close = useCallback(_close, [])
 
-    useLocalEvent('set-overlay', updatedOverlay =>
-        setLocalOverlay([updatedOverlay, Date.now()]),
-    )
+    useLocalEvent('set-overlay', updatedOverlay => {
+        updatedOverlay.props.close = function () {
+            setLocalOverlay(items => [
+                items[0].filter(i => i !== updatedOverlay),
+                items[1],
+            ])
+        }
+        return setLocalOverlay(currentOverlay => [
+            [...currentOverlay[0], updatedOverlay],
+            currentOverlay[1],
+        ])
+    })
     return !overlay ? null : (
-        <View key={key} style={styles.outer}>
-            {overlay}
-        </View>
+        <OverlayContext.Provider value={{ close }}>
+            <View key={key} style={styles.outer}>
+                <Mounted above={true}>{overlay}</Mounted>
+            </View>
+        </OverlayContext.Provider>
     )
+
+    function _close(id, field = 'id') {
+        setLocalOverlay(items => [
+            items[0].filter(i => {
+                i.props[field] !== id
+            }),
+            items[1],
+        ])
+    }
 }
