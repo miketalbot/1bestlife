@@ -1,6 +1,6 @@
 import React from 'react'
 import { useUser } from '../user-context'
-import { StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { typeDef } from './register-task'
 import { usePalette } from '../config/palette'
 import { ensureArray } from '../lib/ensure-array'
@@ -24,6 +24,9 @@ export const styles = StyleSheet.create({
         fontSize: 16,
     },
     taskControls: {},
+    image: {
+        width: Dimensions.get('window').width * 0.66,
+    },
 })
 
 export function Task({ task, ...props }) {
@@ -37,20 +40,16 @@ export function Task({ task, ...props }) {
     const description = ensureArray(taskDef.desc)
     return (
         <View style={[basic.text, styles.task]}>
-            {taskDef.image}
-            <View style={styles.title}>
-                <Text style={[basic.text, styles.titleText]}>
-                    {taskDef.title}
-                </Text>
-            </View>
             <View style={[basic.text, styles.description]}>
                 {description.map((desc, i) => {
-                    return (
+                    return typeof desc === 'string' ? (
                         <Text
                             key={i}
                             style={[basic.text, styles.descriptionText]}>
                             {desc}
                         </Text>
+                    ) : (
+                        desc
                     )
                 })}
             </View>

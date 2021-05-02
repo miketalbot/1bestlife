@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { OverlayContext, setOverlay } from '../Overlay'
-import { StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, View } from 'react-native'
 import { TickAlt } from '../animations'
 import noop from '../lib/noop'
 
@@ -32,7 +32,7 @@ export function completed({
 const styles = StyleSheet.create({
     notificationPanel: {
         position: 'absolute',
-        top: 80,
+        top: Dimensions.get('window').height - 200,
         left: 16,
         right: 16,
         padding: 16,

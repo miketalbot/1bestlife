@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { raise, useLocalEvent } from './lib/local-events'
-import { Mounted } from '../lib/Mounted'
+import { Mounted } from './lib/Mounted'
 
 export const OverlayContext = React.createContext()
 
@@ -24,6 +24,11 @@ export function setOverlay(overlay) {
     raise('set-overlay', overlay)
 }
 
+const mounting = {
+    fromBelowBefore: { translateX: 0, opacity: 0, translateY: 250 },
+    fromBelowAfter: { translateX: 0, translateY: 250, opacity: 0 },
+}
+
 export function Overlay() {
     const [[overlay, key] = [], setLocalOverlay] = useState(() => [[], 0])
     const close = useCallback(_close, [])
@@ -43,7 +48,11 @@ export function Overlay() {
     return !overlay ? null : (
         <OverlayContext.Provider value={{ close }}>
             <View key={key} style={styles.outer}>
-                <Mounted above={true}>{overlay}</Mounted>
+                <Mounted
+                    beforeMounted={mounting.fromBelowBefore}
+                    afterMounted={mounting.fromBelowAfter}>
+                    {overlay}
+                </Mounted>
             </View>
         </OverlayContext.Provider>
     )

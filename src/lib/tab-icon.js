@@ -1,16 +1,10 @@
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import React from 'react'
+import { Icon } from './icons'
 
 export function tabIcon(name) {
     return {
-        tabBarIcon({ focused, color, size }) {
-            return (
-                <Ionicons
-                    name={`${name}${focused ? '' : '-outline'}`}
-                    size={size}
-                    color={color}
-                />
-            )
+        tabBarIcon({ color, size }) {
+            return <Icon name={`${name}`} size={size} color={color} />
         },
     }
 }

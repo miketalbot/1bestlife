@@ -13,13 +13,15 @@ handle('get-tasks', applyDefaultTasks)
 
 const styles = StyleSheet.create({
     taskImage: {
-        width: 180,
+        width: '100%',
     },
 })
 
 const nameTask = registerTask({
     id: 'name',
     typeId: 'name',
+    alwaysExpanded: true,
+    icon: 'user',
     title: "What's your name?",
     desc: "Let's get to know each other better, what name should I call you?",
     image: <Smilie autoPlay={true} style={styles.taskImage} />,
@@ -33,6 +35,7 @@ const nameTask = registerTask({
 registerTask({
     id: 'greet',
     typeId: 'greet',
+    alwaysExpanded: true,
     image: (
         <StarStrike
             autoPlay={true}
@@ -47,7 +50,31 @@ registerTask({
         "Right now I've setup some immediate goals to get you ready for the important stuff.",
     ],
     type: props => <DoneTask {...props} caption={''} />,
-    then: [willComplete({ name: 'Reading the introduction' })],
+    then: [
+        willMakeTask({ type: 'link' }),
+        willMakeTask({ type: 'link2' }),
+        willComplete({ name: 'Reading the introduction' }),
+    ],
+})
+
+registerTask({
+    id: 'link',
+    typeId: 'link',
+    icon: 'at',
+    color: '#ca66a1',
+    title: 'Link your email',
+    desc: ['You should link your email'],
+    type: props => <DoneTask {...props} caption="" />,
+})
+
+registerTask({
+    id: 'link2',
+    icon: 'inbox',
+    color: '#cb7d39',
+    typeId: 'link2',
+    title: 'Link your other thing',
+    desc: ['You should link your thing'],
+    type: props => <DoneTask {...props} caption="" />,
 })
 
 function applyDefaultTasks(user) {

@@ -7,6 +7,9 @@ export const palette = {
             fontSize: 58,
             fontWeight: '100',
         },
+        app: {
+            backgroundColor: '#15383d',
+        },
     },
     dark: {
         text: {
@@ -30,6 +33,6 @@ palette.dark = merge({ ...palette.all }, palette.dark)
 palette.light = merge({ ...palette.all }, palette.light)
 
 export function usePalette() {
-    const isDarkMode = useColorScheme() === 'dark'
+    const isDarkMode = useColorScheme() === 'dark' || true
     return [palette[isDarkMode ? 'dark' : 'light'], isDarkMode]
 }
