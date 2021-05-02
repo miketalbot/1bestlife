@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useEffect } from 'react'
+import React, { Fragment } from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import { DarkTheme, NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -14,11 +14,11 @@ import { AchievementsNav } from './AchievementsNav'
 import { Home } from './Home'
 import { tabIcon } from './lib/tab-icon'
 import { Overlay } from './Overlay'
-import { completed } from './screens/completed'
 import { palette } from './config/palette'
 import { AddButton } from './tasks/AddButton'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Goal } from './tasks/Goal'
+import { setStackNavigator } from './lib/navigation'
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -32,16 +32,16 @@ const styles = StyleSheet.create({
 })
 
 const App = () => {
-    useEffect(() => {
-        completed('Hello')
-    })
     return (
         <View style={styles.outer}>
             <NavigationContainer style={styles.outer} theme={DarkTheme}>
                 <Stack.Navigator
                     screenOptions={{
                         cardOverlayEnabled: true,
-                        cardStyle: { backgroundColor: '#000' },
+                        headerStyle: {
+                            backgroundColor: palette.all.app.backgroundColor,
+                        },
+                        headerTintColor: palette.all.app.headerTintColor,
                     }}>
                     <Stack.Screen
                         options={{ headerShown: false }}
@@ -56,22 +56,13 @@ const App = () => {
     )
 }
 
-export const StackNavigatorContext = React.createContext()
-
-let stackNavigator
-
-export function getStackNavigator() {
-    return stackNavigator
-}
-
 function Main({ navigation }) {
-    stackNavigator = navigation
+    setStackNavigator(navigation)
     return (
-        <StackNavigatorContext.Provider value={navigation}>
+        <Fragment>
             <Tab.Navigator
                 tabBarOptions={{
-                    activeTintColor: 'white',
-                    inactiveTintColor: 'rgba(255,255,255,0.4)',
+                    ...palette.all.tabs,
                     style: {
                         color: 'white',
                         borderTopWidth: 0,
@@ -112,8 +103,8 @@ function Main({ navigation }) {
                     component={BestLifeNav}
                 />
             </Tab.Navigator>
-            <AddButton />
-        </StackNavigatorContext.Provider>
+            <AddButton key="addbutton" />
+        </Fragment>
     )
 }
 

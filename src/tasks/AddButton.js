@@ -15,7 +15,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { mix } from 'react-native-redash'
 import { Text } from '../components/Theme'
-import { getStackNavigator } from '../App'
+import { getStackNavigator } from '../lib/navigation'
 
 const styles = StyleSheet.create({
     add: {
@@ -63,12 +63,19 @@ function MenuItem({ icon, text, type }) {
         </Pressable>
     )
     function select() {
-        close()
+        setTimeout(() => close(), 750)
         navigate.navigate('Set A Goal', { type })
     }
 }
 
 const defaultItems = [
+    <MenuItem
+        key="stuggle"
+        type="struggle"
+        icon="star-of-life"
+        text="Help me with..."
+    />,
+    <View style={styles.spacer} key="spacer2" />,
     <MenuItem
         key="break"
         type="break"

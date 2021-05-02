@@ -9,6 +9,14 @@ export const palette = {
         },
         app: {
             backgroundColor: '#15383d',
+            darkPanel: '#1d122c',
+            color: '#fff',
+            accent: '#ff8811',
+            headerTintColor: '#fff6',
+        },
+        tabs: {
+            activeTintColor: '#fff',
+            inactiveTintColor: 'rgba(255,255,255,0.4)',
         },
     },
     dark: {

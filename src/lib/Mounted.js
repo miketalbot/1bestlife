@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
@@ -8,7 +8,10 @@ import Animated, {
 import { useRefresh } from './hooks'
 import { View } from 'react-native'
 
+let id = 0
+
 export function Mounted({ children, above, ...props }) {
+    const [key] = useState(() => id++)
     const existing = useRef(new Map())
     const counter = useRef(new Map())
     const mounting = useRef(new Map())
@@ -41,18 +44,34 @@ export function Mounted({ children, above, ...props }) {
         }, 750)
     }
 
-    return [
-        ...Array.from(mounting.current.values()).map(({ child, key }) => (
-            <Mountable above={above} {...props} key={key} isMounted={true}>
-                {child}
-            </Mountable>
-        )),
-        ...Array.from(unmounting.current.values()).map(({ child, key }) => (
-            <Mountable above={above} {...props} key={key} isMounted={false}>
-                {child}
-            </Mountable>
-        )),
-    ]
+    return (
+        <View key={key}>
+            {[
+                ...Array.from(mounting.current.values()).map(
+                    ({ child, key }) => (
+                        <Mountable
+                            above={above}
+                            {...props}
+                            key={key}
+                            isMounted={true}>
+                            {child}
+                        </Mountable>
+                    ),
+                ),
+                ...Array.from(unmounting.current.values()).map(
+                    ({ child, key }) => (
+                        <Mountable
+                            above={above}
+                            {...props}
+                            key={key}
+                            isMounted={false}>
+                            {child}
+                        </Mountable>
+                    ),
+                ),
+            ]}
+        </View>
+    )
 }
 
 const styles = {

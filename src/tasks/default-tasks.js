@@ -21,6 +21,7 @@ const nameTask = registerTask({
     id: 'name',
     typeId: 'name',
     alwaysExpanded: true,
+    searchable: false,
     icon: 'user',
     title: "What's your name?",
     desc: "Let's get to know each other better, what name should I call you?",
@@ -36,6 +37,7 @@ registerTask({
     id: 'greet',
     typeId: 'greet',
     alwaysExpanded: true,
+    searchable: false,
     image: (
         <StarStrike
             autoPlay={true}
@@ -61,6 +63,7 @@ registerTask({
     id: 'link',
     typeId: 'link',
     icon: 'at',
+    searchable: false,
     color: '#ca66a1',
     title: 'Link your email',
     desc: ['You should link your email'],
@@ -71,6 +74,7 @@ registerTask({
     id: 'link2',
     icon: 'inbox',
     color: '#cb7d39',
+    searchable: false,
     typeId: 'link2',
     title: 'Link your other thing',
     desc: ['You should link your thing'],

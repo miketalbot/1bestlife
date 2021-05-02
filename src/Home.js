@@ -30,9 +30,7 @@ export function Home() {
     const tasks = useTasks()
     return (
         <SafeAreaView style={[styles.text, styles.app, homeStyles.home]}>
-            <StatusBar
-                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-            />
+            <StatusBar barStyle={'light-content'} />
             <View style={homeStyles.full}>
                 <View style={homeStyles.spacer} />
                 <ScrollView

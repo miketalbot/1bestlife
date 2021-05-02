@@ -23,7 +23,7 @@ const noOvershoot = {
     overshootClamping: true,
 }
 
-const taskListItemStyles = StyleSheet.create({
+export const taskListItemStyles = StyleSheet.create({
     absolute: {
         position: 'absolute',
     },
