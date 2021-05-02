@@ -1,5 +1,11 @@
 import React, { useMemo, useState } from 'react'
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+    KeyboardAvoidingView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from 'react-native'
 import { palette } from '../config/palette'
 import { TextInputAdorned } from '../lib/text-input'
 import { Icon, IconButton } from '../lib/icons'
@@ -19,6 +25,7 @@ const styles = StyleSheet.create({
     },
     contents: {
         padding: 8,
+        flex: 1,
     },
     text: {
         color: 'white',
@@ -111,62 +118,68 @@ function TaskChoices({ search = '', category }) {
     }, [search, category])
     const insets = useSafeAreaInsets()
     return (
-        <ScrollView
-            style={{
-                flexShrink: 1,
-                marginTop: 11,
-                marginLeft: -8,
-                marginRight: -8,
-                paddingLeft: 8,
-                paddingRight: 8,
-                height: Dimensions.get('window').height - insets.top - 160,
-            }}>
-            <Mounted springConfig={{ mass: 0.38 }}>
-                {list.map(([name, taskDef], i) => {
-                    return (
-                        <Box
-                            key={`${name}${i}`}
-                            mb="xs"
-                            flexDirection="row"
-                            alignItems="center">
-                            <ColorBar color={taskDef.color || '#444'} />
-                            <SelectableLine color={taskDef.color}>
-                                <Box
-                                    flexDirection="row"
-                                    alignItems="center"
-                                    width="100%"
-                                    height={60}>
-                                    <View style={[taskListItemStyles.icon]}>
-                                        {taskDef.icon ? (
-                                            <Icon
-                                                color="white"
-                                                icon={taskDef.icon}
-                                            />
-                                        ) : null}
-                                    </View>
-                                    <View>
-                                        <Text
-                                            style={[
-                                                styles.text,
-                                                taskListItemStyles.taskItemTitle,
-                                            ]}>
-                                            {taskDef.title}
-                                        </Text>
-                                    </View>
-                                    <View style={taskListItemStyles.spacer} />
-                                    <View style={[taskListItemStyles.expander]}>
-                                        <Icon
-                                            icon="chevron-right"
-                                            color="#fff"
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+            <ScrollView
+                style={{
+                    flex: 1,
+                    marginTop: 11,
+                    marginLeft: -8,
+                    marginRight: -8,
+                    paddingLeft: 8,
+                    paddingRight: 8,
+                }}>
+                <Mounted springConfig={{ mass: 0.38 }}>
+                    {list.map(([name, taskDef], i) => {
+                        return (
+                            <Box
+                                key={`${name}${i}`}
+                                mb="xs"
+                                flexDirection="row"
+                                alignItems="center">
+                                <ColorBar color={taskDef.color || '#444'} />
+                                <SelectableLine color={taskDef.color}>
+                                    <Box
+                                        flexDirection="row"
+                                        alignItems="center"
+                                        width="100%"
+                                        height={60}>
+                                        <View style={[taskListItemStyles.icon]}>
+                                            {taskDef.icon ? (
+                                                <Icon
+                                                    color="white"
+                                                    icon={taskDef.icon}
+                                                />
+                                            ) : null}
+                                        </View>
+                                        <View>
+                                            <Text
+                                                style={[
+                                                    styles.text,
+                                                    taskListItemStyles.taskItemTitle,
+                                                ]}>
+                                                {taskDef.title}
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={taskListItemStyles.spacer}
                                         />
-                                    </View>
-                                </Box>
-                            </SelectableLine>
-                        </Box>
-                    )
-                })}
-            </Mounted>
-            <View style={{ height: insets.bottom }} />
-        </ScrollView>
+                                        <View
+                                            style={[
+                                                taskListItemStyles.expander,
+                                            ]}>
+                                            <Icon
+                                                icon="chevron-right"
+                                                color="#fff"
+                                            />
+                                        </View>
+                                    </Box>
+                                </SelectableLine>
+                            </Box>
+                        )
+                    })}
+                </Mounted>
+                <View style={{ height: insets.bottom + 60 }} />
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
