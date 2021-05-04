@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 const AnimatedRect = Animated.createAnimatedComponent(Rect)
 const CloseContext = React.createContext()
 
-function MenuItem({ icon, text, type }) {
+function MenuItem({ icon, text, type, ...props }) {
     const close = useContext(CloseContext)
     const navigate = getStackNavigator()
     return (
@@ -56,7 +56,9 @@ function MenuItem({ icon, text, type }) {
                 <View style={styles.icon}>
                     <Icon icon={icon} />
                 </View>
-                <Text variant="button">{text}</Text>
+                <Text variant="button" color="textContrast">
+                    {text}
+                </Text>
                 <View style={styles.flexGrow} />
                 <Icon size={12} icon="chevron-right" />
             </View>
@@ -64,7 +66,7 @@ function MenuItem({ icon, text, type }) {
     )
     function select() {
         setTimeout(() => close(), 750)
-        navigate.navigate('Set A Goal', { type })
+        navigate.navigate('Set A NewTask', { type, title: `${text}`, ...props })
     }
 }
 
@@ -80,6 +82,7 @@ const defaultItems = [
         key="break"
         type="break"
         icon="times-octagon"
+        category="breakHabit"
         text="Break a Habit"
     />,
     <MenuItem key="make" type="make" icon="lightbulb-on" text="Make a Habit" />,

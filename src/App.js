@@ -12,13 +12,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { BestLifeNav } from './BestLifeNav'
 import { AchievementsNav } from './AchievementsNav'
 import { Home } from './Home'
-import { tabIcon } from './lib/tab-icon'
+import { tabIcon } from 'lib/tab-icon'
 import { Overlay } from './Overlay'
-import { palette } from './config/palette'
-import { AddButton } from './tasks/AddButton'
+import { palette } from 'config/palette'
+import { AddButton } from 'tasks/AddButton'
 import { createStackNavigator } from '@react-navigation/stack'
-import { Goal } from './tasks/Goal'
-import { setStackNavigator } from './lib/navigation'
+import { NewTask } from 'tasks/NewTask'
+import { setStackNavigator } from 'lib/navigation'
+import { useScreens } from 'lib/screens'
 
 const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -32,9 +33,14 @@ const styles = StyleSheet.create({
 })
 
 const App = () => {
+    const screens = useScreens()
     return (
         <View style={styles.outer}>
-            <NavigationContainer style={styles.outer} theme={DarkTheme}>
+            <NavigationContainer
+                key={`${screens._id}+${screens.length}`}
+                ref={setStackNavigator}
+                style={styles.outer}
+                theme={DarkTheme}>
                 <Stack.Navigator
                     screenOptions={{
                         cardOverlayEnabled: true,
@@ -48,7 +54,20 @@ const App = () => {
                         name={'Tasks'}
                         component={Main}
                     />
-                    <Stack.Screen name={'Set A Goal'} component={Goal} />
+                    <Stack.Screen
+                        options={({
+                            route: {
+                                params: { title },
+                            },
+                        }) => ({
+                            title,
+                        })}
+                        name={'Set A NewTask'}
+                        component={NewTask}
+                    />
+                    {screens.map(screen => (
+                        <Stack.Screen key={screen.name} {...screen} />
+                    ))}
                 </Stack.Navigator>
             </NavigationContainer>
             <Overlay />
@@ -56,8 +75,7 @@ const App = () => {
     )
 }
 
-function Main({ navigation }) {
-    setStackNavigator(navigation)
+function Main() {
     return (
         <Fragment>
             <Tab.Navigator

@@ -1,14 +1,32 @@
-import React, { useState } from 'react'
-import { Box } from '../components/Theme'
-import { Pressable } from 'react-native'
-import { Icon } from '../lib/icons'
-import { palette } from '../config/palette'
+import React, { useEffect, useState } from 'react'
+import { Box } from 'components/Theme'
+import { Dimensions, Pressable } from 'react-native'
+import { Icon } from 'lib/icons'
+import { palette } from 'config/palette'
 import { categories } from './types/categories'
 
-export function CategorySelector({ category = '', onChange = () => {} }) {
+export function CategorySelector({
+    category = '',
+    has = () => true,
+    mustSelect,
+    onChange = () => {},
+}) {
     const [currentCategory, setCurrentCategory] = useState(category)
+    const buttonSize = Math.floor((Dimensions.get('window').width - 50) / 9)
+    useEffect(() => {
+        if ((!category || !has(category)) && mustSelect) {
+            const updatedCategory = Object.keys(categories).find(name =>
+                has(name),
+            )
+            setCurrentCategory(updatedCategory)
+            onChange(updatedCategory)
+        } else if (!has(category)) {
+            setCurrentCategory('')
+            onChange('')
+        }
+    }, [category, mustSelect, onChange, has])
     return (
-        <Box mt="m" flexDirection="row" justifyContent="space-evenly">
+        <Box mt="s" mb="m" flexDirection="row" justifyContent="space-evenly">
             {Object.entries(categories).map(([name, definition]) => {
                 return (
                     <Pressable key={name} onPress={setCategory}>
@@ -16,11 +34,15 @@ export function CategorySelector({ category = '', onChange = () => {} }) {
                             borderRadius="s"
                             alignItems="center"
                             justifyContent="space-around"
-                            width={40}
-                            height={40}
+                            width={buttonSize}
+                            height={buttonSize}
                             style={{
                                 backgroundColor: `${definition.color}${
-                                    currentCategory === name ? 'FF' : 'C0'
+                                    currentCategory === name
+                                        ? 'FF'
+                                        : has(name)
+                                        ? 'C0'
+                                        : '00'
                                 }`,
                             }}>
                             <Icon color="white" icon={definition.icon} />
@@ -29,7 +51,7 @@ export function CategorySelector({ category = '', onChange = () => {} }) {
                             <Box
                                 position="absolute"
                                 bottom={-7}
-                                width={40}
+                                width={buttonSize}
                                 height={3}
                                 style={{
                                     backgroundColor: palette.all.app.accent,
@@ -40,8 +62,12 @@ export function CategorySelector({ category = '', onChange = () => {} }) {
                 )
 
                 function setCategory() {
+                    if (!has(name)) {
+                        return
+                    }
                     setCurrentCategory(current => {
-                        let result = current === name ? '' : name
+                        let result =
+                            current === name ? (mustSelect ? name : '') : name
                         onChange(result)
                         return result
                     })

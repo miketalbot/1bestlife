@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { raise, useLocalEvent } from './lib/local-events'
-import { Mounted } from './lib/Mounted'
+import { raise, useLocalEvent } from 'lib/local-events'
+import { Mounted } from 'lib/Mounted'
 
 export const OverlayContext = React.createContext()
 

@@ -6,39 +6,26 @@ import {
     ThemeProvider as ReStyleThemeProvider,
     useTheme as useReTheme,
 } from '@shopify/restyle'
+import { palette } from '../config/palette'
+import Color from 'color'
 
 const { width } = Dimensions.get('window')
 
 export const aspectRatio = width / 375
 
-export const palette = {
-    green: '#2CB9B0',
-    white: 'white',
-    orange: '#FE5E33',
-    yellow: '#FFC641',
-    pink: '#FF87A2',
-    violet: '#442CB9',
-    lightBlue: '#BFEAF5',
-}
-
 const theme = {
     colors: {
-        primary: palette.green,
-        primaryLight: '#E7F9F7',
-        secondary: '#0C0D34',
+        primary: palette.all.app.accent,
+        primaryLight: Color(palette.all.app.accent).lighten(0.3).hex(),
+        secondary: palette.all.app.accent,
         danger: '#FF0058',
         info: '#808080',
-        edit: palette.lightBlue,
-        text: 'rgba(12, 13, 52, 0.7)',
-        textContrast: palette.white,
-        background: palette.white,
-        background2: '#F6F6F6',
-        graph1: palette.orange,
-        graph2: palette.yellow,
-        drawer1: palette.orange,
-        drawer2: palette.yellow,
-        drawer3: palette.pink,
-        drawer4: palette.violet,
+        edit: Color(palette.all.app.accent).darken(0.2).hex(),
+        text: palette.all.app.color,
+        textContrast: palette.all.app.darkColor,
+        textMuted: Color(palette.all.app.color).fade(0.5).hex() + 'A0',
+        background: palette.all.app.backgroundColor,
+        background2: palette.all.app.lightBackgroundColor,
     },
     spacing: {
         xs: 4,
@@ -87,6 +74,19 @@ const theme = {
             fontSize: 12,
             lineHeight: 24,
             color: 'secondary',
+        },
+        action: {
+            fontSize: 14,
+            color: 'primary',
+        },
+        label: {
+            fontSize: 12,
+            color: 'textMuted',
+        },
+        iconTitle: {
+            fontSize: 12,
+            color: 'textMuted',
+            textAlign: 'center',
         },
     },
     breakpoints: {

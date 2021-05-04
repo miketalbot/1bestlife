@@ -1,4 +1,4 @@
-import { usePalette } from '../config/palette'
+import { usePalette } from 'config/palette'
 import React, { useEffect, useMemo, useState } from 'react'
 import Animated, {
     useAnimatedStyle,
@@ -6,18 +6,15 @@ import Animated, {
     withSpring,
 } from 'react-native-reanimated'
 import { mix } from 'react-native-redash'
-import { raise, useLocalEvent } from '../lib/local-events'
+import { raise, useLocalEvent } from 'lib/local-events'
 import { typeDef } from './register-task'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { ColorBar } from '../lib/ColorBar'
+import { ColorBar } from 'lib/ColorBar'
 import { SelectableLine } from '../SelectableLine'
 import { Task } from './task'
-import { Mounted } from '../lib/Mounted'
-import { Icon } from '../lib/icons'
-
-function defer(fn) {
-    return (...params) => setTimeout(() => fn(...params))
-}
+import { Mounted } from 'lib/Mounted'
+import { Icon } from 'lib/icons'
+import { defer } from 'lib/defer'
 
 const noOvershoot = {
     overshootClamping: true,
@@ -32,6 +29,7 @@ export const taskListItemStyles = StyleSheet.create({
         alignItems: 'stretch',
         width: '95%',
         marginBottom: 4,
+        backgroundColor: 'transparent',
     },
     taskItemTitle: {
         fontSize: 16,
@@ -107,7 +105,6 @@ export function TaskListItem({ task }) {
     return (
         <View>
             <Pressable
-                style={shadowStyle}
                 onPress={toggle}
                 onPressIn={() => setTouched(true)}
                 onPressOut={() => setTouched(false)}>

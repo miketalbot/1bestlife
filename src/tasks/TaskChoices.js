@@ -1,4 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
+import { getAllTasks } from './register-task'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
     KeyboardAvoidingView,
     ScrollView,
@@ -6,74 +8,12 @@ import {
     Text,
     View,
 } from 'react-native'
-import { palette } from '../config/palette'
-import { TextInputAdorned } from '../lib/text-input'
-import { Icon, IconButton } from '../lib/icons'
+import { Mounted } from '../lib/Mounted'
 import { Box } from '../components/Theme'
-import { If } from '../lib/switch'
-import { CategorySelector } from './CategorySelector'
-import { getAllTasks } from './register-task'
 import { ColorBar } from '../lib/ColorBar'
 import { SelectableLine } from '../SelectableLine'
 import { taskListItemStyles } from './TaskListItem'
-import { Mounted } from '../lib/Mounted'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-
-const styles = StyleSheet.create({
-    goalPage: {
-        backgroundColor: palette.all.app.backgroundColor,
-    },
-    contents: {
-        padding: 8,
-        flex: 1,
-    },
-    text: {
-        color: 'white',
-    },
-})
-
-export function Goal({ type }) {
-    const [name, setName] = useState('')
-    const [category, setCategory] = useState('')
-    return (
-        <View key="goal" style={[StyleSheet.absoluteFill, styles.goalPage]}>
-            <View style={styles.contents}>
-                <TextInputAdorned
-                    label="Task"
-                    value={name}
-                    autoFocus
-                    onChangeText={setName}
-                    right={
-                        <Box flexDirection="row">
-                            <If truthy={name.length}>
-                                <Box mr={'s'}>
-                                    <IconButton
-                                        onPress={() => setName('')}
-                                        backgroundColor="#fff1"
-                                        color={'white'}
-                                        icon="times"
-                                    />
-                                </Box>
-                            </If>
-                            <If truthy={name.length > 5}>
-                                <IconButton
-                                    onPress={makeTask}
-                                    backgroundColor="white"
-                                    color={palette.all.app.backgroundColor}
-                                    icon="chevron-right"
-                                />
-                            </If>
-                        </Box>
-                    }
-                />
-                <CategorySelector category={category} onChange={setCategory} />
-                <TaskChoices category={category} search={name} />
-            </View>
-        </View>
-    )
-
-    function makeTask() {}
-}
+import { Icon } from '../lib/icons'
 
 function scoreTask(search, definition) {
     if (!search.trim()) {
@@ -91,10 +31,16 @@ function scoreTask(search, definition) {
     return totalScore
 }
 
-function TaskChoices({ search = '', category }) {
+const styles = StyleSheet.create({
+    text: {
+        color: 'white',
+    },
+})
+
+export function TaskChoices({ search = '', category, onTasks = () => {} }) {
     search = search.toLowerCase()
     const list = useMemo(() => {
-        return Object.entries(getAllTasks())
+        let result = Object.entries(getAllTasks())
             .filter(
                 ([, definition]) =>
                     definition.searchable !== false &&
@@ -115,6 +61,8 @@ function TaskChoices({ search = '', category }) {
             })
             .filter(([, { score }]) => !search.trim() || score > 0.05)
             .sortBy(['1.order'])
+        onTasks(result.map('1'))
+        return result
     }, [search, category])
     const insets = useSafeAreaInsets()
     return (

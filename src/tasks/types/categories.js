@@ -40,7 +40,7 @@ export const categories = {
         icon: 'plane-departure',
     },
     breakHabit: {
-        color: '#5a0b4d',
+        color: '#Fa0b3d',
         caption: 'Break a Habit',
         icon: 'traffic-light-stop',
     },

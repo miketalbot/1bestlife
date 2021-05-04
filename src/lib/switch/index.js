@@ -25,7 +25,7 @@ export function If({ value, truthy, field, children, equals, not, ...props }) {
         : props.else || null
 }
 
-export function Case({ when, children, execute = noop }) {
+export function Case({ when, then, children, execute = noop }) {
     const toCheck = ensureArray(when)
     const { value, cases } = useContext(SwitchContext)
     let condition = toCheck.some(whenCondition => {
@@ -39,16 +39,16 @@ export function Case({ when, children, execute = noop }) {
     cases['' + when] = condition
     if (condition) {
         execute()
-        return <>{children}</>
+        return <>{then || children}</>
     } else {
         return null
     }
 }
 
-export function CaseElse({ children }) {
+export function CaseElse({ children, then }) {
     const { cases } = useContext(SwitchContext)
     if (!Object.values(cases).some(v => !!v)) {
-        return <>{children}</>
+        return <>{then || children}</>
     }
     return null
 }

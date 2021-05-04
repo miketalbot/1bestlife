@@ -7,10 +7,13 @@ import {
     View,
 } from 'react-native'
 import React from 'react'
-import { usePalette } from './config/palette'
-import { useTasks } from './tasks'
-import { Mounted } from './lib/Mounted'
-import { TaskListItem } from './tasks/TaskListItem'
+import { usePalette } from 'config/palette'
+import { useTasks } from 'tasks'
+import { Mounted } from 'lib/Mounted'
+import { TaskListItem } from 'tasks/TaskListItem'
+import 'tasks/NewTask'
+import 'tasks/ConfigureTask'
+import { DebuggerView } from 'lib/DebuggerView'
 
 const homeStyles = StyleSheet.create({
     home: {
@@ -44,6 +47,7 @@ export function Home() {
                 </ScrollView>
                 <View style={homeStyles.spacer} />
             </View>
+            <DebuggerView />
         </SafeAreaView>
     )
 }

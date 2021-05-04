@@ -4,4 +4,9 @@ module.exports = {
     rules: {
         semi: ['error', 'never'],
     },
+    settings: {
+        'import/resolver': {
+            'babel-module': {},
+        },
+    },
 }

@@ -14,3 +14,7 @@ export function Defer() {
     })
     return promise
 }
+
+export function defer(fn) {
+    return (...params) => setTimeout(() => fn(...params))
+}

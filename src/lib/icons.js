@@ -3,6 +3,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import * as Icons from '@fortawesome/pro-solid-svg-icons'
 import * as LightIcons from '@fortawesome/pro-light-svg-icons'
+import Sugar from 'sugar'
 import { Pressable } from 'react-native'
 import Animated, {
     useAnimatedStyle,
@@ -23,6 +24,12 @@ function addIcons(scanIcons) {
 addIcons(Icons)
 addIcons(LightIcons)
 
+export const icons = Object.keys(LightIcons)
+    .filter(key => key !== LightIcons.prefix && key !== 'prefix')
+    .map(icon => {
+        return Sugar.String.dasherize(icon.slice(2))
+    })
+
 export function Icon({ icon, light = true, name, ...props }) {
     return (
         <FontAwesomeIcon
@@ -31,6 +38,11 @@ export function Icon({ icon, light = true, name, ...props }) {
             {...props}
         />
     )
+}
+export function icon(name) {
+    return function ({ size, color }) {
+        return <Icon icon={name} {...{ size, color }} />
+    }
 }
 
 export function IconButton({

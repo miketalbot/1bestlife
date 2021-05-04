@@ -12,7 +12,10 @@ export const palette = {
             darkPanel: '#1d122c',
             color: '#fff',
             accent: '#ff8811',
+            secondary: '#f90093',
             headerTintColor: '#fff6',
+            darkColor: '#333',
+            lightBackgroundColor: '#ffffff80',
         },
         tabs: {
             activeTintColor: '#fff',
