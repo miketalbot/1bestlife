@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { Fragment } from 'react'
+import React, { Fragment, useMemo } from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import { DarkTheme, NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -22,7 +22,6 @@ import { setStackNavigator } from 'lib/navigation'
 import { useScreens } from 'lib/screens'
 
 const Tab = createBottomTabNavigator()
-const Stack = createStackNavigator()
 
 const styles = StyleSheet.create({
     outer: {
@@ -34,6 +33,9 @@ const styles = StyleSheet.create({
 
 const App = () => {
     const screens = useScreens()
+    const stack = useMemo(() => {
+        return createStackNavigator()
+    }, [screens._id])
     return (
         <View style={styles.outer}>
             <NavigationContainer
@@ -41,7 +43,7 @@ const App = () => {
                 ref={setStackNavigator}
                 style={styles.outer}
                 theme={DarkTheme}>
-                <Stack.Navigator
+                <stack.Navigator
                     screenOptions={{
                         cardOverlayEnabled: true,
                         headerStyle: {
@@ -49,12 +51,12 @@ const App = () => {
                         },
                         headerTintColor: palette.all.app.headerTintColor,
                     }}>
-                    <Stack.Screen
+                    <stack.Screen
                         options={{ headerShown: false }}
                         name={'Tasks'}
                         component={Main}
                     />
-                    <Stack.Screen
+                    <stack.Screen
                         options={({
                             route: {
                                 params: { title },
@@ -66,9 +68,9 @@ const App = () => {
                         component={NewTask}
                     />
                     {screens.map(screen => (
-                        <Stack.Screen key={screen.name} {...screen} />
+                        <stack.Screen key={screen.name} {...screen} />
                     ))}
-                </Stack.Navigator>
+                </stack.Navigator>
             </NavigationContainer>
             <Overlay />
         </View>

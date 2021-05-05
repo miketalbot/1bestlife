@@ -46,7 +46,9 @@ export function Page({ children, footer, style: baseStyle, ...props }) {
         Keyboard.addListener('keyboardWillHide', hidden)
         return () => {
             Keyboard.removeListener('keyboardDidShow', shown)
+            Keyboard.removeListener('keyboardWillShow', shown)
             Keyboard.removeListener('keyboardDidHide', hidden)
+            Keyboard.removeListener('keyboardWillHide', hidden)
         }
     }, [])
     return (

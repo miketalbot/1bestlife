@@ -11,6 +11,8 @@ import { ThemeProvider } from './src/components/Theme'
 import { SafeAreaProvider } from 'react-native-safe-area-context/src/SafeAreaContext'
 import Sugar from 'sugar'
 import './src/tasks/types'
+import 'tasks/TodoEditor'
+import 'tasks/ReminderConfiguration'
 import { Icon } from './src/lib/icons'
 import { theme } from './src/lib/paper-theme'
 
@@ -18,6 +20,7 @@ LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
 ])
 Sugar.Array.extend()
+Sugar.Date.extend()
 
 AppRegistry.registerComponent(appName, () => Main)
 

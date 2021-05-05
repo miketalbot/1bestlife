@@ -33,6 +33,7 @@ const theme = {
         m: 16,
         l: 24,
         xl: 40,
+        input: 12,
     },
     borderRadii: {
         s: 4,

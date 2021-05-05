@@ -1,6 +1,7 @@
 import LinearGradient from 'react-native-linear-gradient'
 import React from 'react'
 import { StyleSheet } from 'react-native'
+import Color from 'color'
 
 const styles = StyleSheet.create({
     gradientBox: {
@@ -20,7 +21,10 @@ export function SelectableLine({ color, children, selected }) {
             end={{ x: 1, y: 0 }}
             style={styles.gradientBox}
             locations={locations}
-            colors={[`${color}80`, `${color}00`]}>
+            colors={[
+                `${Color(color).fade(0.5).toString()}`,
+                `${Color(color).fade(1).toString()}`,
+            ]}>
             {children}
         </LinearGradient>
     )

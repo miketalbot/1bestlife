@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { addScreen } from 'lib/screens'
-import { StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 import { palette } from 'config/palette'
 import { TextInputAdorned } from 'lib/text-input'
 import { addDebugger } from 'lib/DebuggerView'
@@ -8,10 +8,17 @@ import { TaskType } from './TaskType'
 import { CategoryInput } from './CategoryInput'
 import { PropertyBox } from 'lib/PropertyBox'
 import { Case, Switch } from 'lib/switch'
-import { Button, RadioButton } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import { IconInput } from 'lib/ChooseIcon'
-import { Page } from '../lib/page'
-import { Box } from '../components/Theme'
+import { Page } from 'lib/page'
+import { Box } from 'components/Theme'
+import { TodoEditor } from './TodoEditor'
+import { useRefresh } from 'lib/hooks'
+import { DailyEditor } from './DailyEditor'
+import { WeeklyEditor } from './WeeklyEditor'
+import { MonthlyEditor } from './MonthlyEditor'
+import { SettingsContext } from 'lib/SettingsContext'
+import { Reminders } from './Reminders'
 
 const styles = StyleSheet.create({
     taskPage: {
@@ -34,52 +41,82 @@ export const ConfigureTask = addScreen(
             },
         },
     }) {
+        const refresh = useRefresh()
         const [category, setCategory] = useState(initialCategory)
         const [type, setType] = useState(initialType)
         const [name, setName] = useState(text)
         const [icon, setIcon] = useState('star')
         const [settings] = useState({})
         return (
-            <Page
-                footer={
-                    <Box mt="s" mb="s" pl="l" pr="l">
-                        <Button mode="contained">Add Task</Button>
-                    </Box>
-                }
-                style={[StyleSheet.absoluteFill, styles.taskPage]}>
-                <PropertyBox style={styles.contents}>
-                    <IconInput value={icon} onChange={setIcon} />
-                    <TextInputAdorned
-                        label="Task"
-                        value={name}
-                        onChangeText={setName}
-                    />
+            <SettingsContext.Provider value={{ settings, refresh }}>
+                <Page
+                    footer={
+                        <Box mt="s" mb="s" pl="l" pr="l">
+                            <Button mode="contained">Add Task</Button>
+                        </Box>
+                    }
+                    style={[StyleSheet.absoluteFill, styles.taskPage]}>
+                    <ScrollView keyboardShouldPersistTaps="handled">
+                        <PropertyBox style={styles.contents}>
+                            <IconInput value={icon} onChange={setIcon} />
+                            <TextInputAdorned
+                                label="Task"
+                                value={name}
+                                onChangeText={setName}
+                            />
 
-                    <CategoryInput value={category} onChange={setCategory} />
-                    <TaskType value={type} onChange={setType} />
-                    <Switch value={type}>
-                        <Case
-                            when="todo"
-                            then={<TodoEditor settings={settings} />}
-                        />
-                    </Switch>
-                </PropertyBox>
-            </Page>
+                            <CategoryInput
+                                value={category}
+                                onChange={setCategory}
+                            />
+                            <TaskType value={type} onChange={setType} />
+                            <Switch value={type}>
+                                <Case
+                                    when="todo"
+                                    then={
+                                        <TodoEditor
+                                            refresh={refresh}
+                                            settings={settings}
+                                        />
+                                    }
+                                />
+                                <Case
+                                    when="daily"
+                                    then={
+                                        <DailyEditor
+                                            refresh={refresh}
+                                            settings={settings}
+                                        />
+                                    }
+                                />
+                                <Case
+                                    when="weekly"
+                                    then={
+                                        <WeeklyEditor
+                                            refresh={refresh}
+                                            settings={settings}
+                                        />
+                                    }
+                                />
+                                <Case
+                                    when="monthly"
+                                    then={
+                                        <MonthlyEditor
+                                            refresh={refresh}
+                                            settings={settings}
+                                        />
+                                    }
+                                />
+                            </Switch>
+                            <Reminders settings={settings} refresh={refresh} />
+                        </PropertyBox>
+                    </ScrollView>
+                </Page>
+            </SettingsContext.Provider>
         )
     },
     { options: { headerTitle: 'Configure' } },
 )
-
-function TodoEditor({ settings }) {
-    const [mode, setMode] = useState('asap')
-    return (
-        <RadioButton.Group onValueChange={setMode} value={mode}>
-            <RadioButton.Item label="As soon as possible" value="asap" />
-            <RadioButton.Item label="Within a week" value="week" />
-            <RadioButton.Item label="By" value="by" />
-        </RadioButton.Group>
-    )
-}
 
 addDebugger('Configure', () => {
     ConfigureTask.navigate({

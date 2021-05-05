@@ -1,5 +1,6 @@
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { ensureArray } from './ensure-array'
 
 const pressableStyles = StyleSheet.create({
     fullWidth: {
@@ -13,7 +14,9 @@ export function FullWidthPressable({
     ...props
 }) {
     return (
-        <Component style={pressableStyles.fullWidth} {...props}>
+        <Component
+            {...props}
+            style={[...ensureArray(props.style), pressableStyles.fullWidth]}>
             {children}
         </Component>
     )

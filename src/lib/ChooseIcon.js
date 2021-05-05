@@ -11,11 +11,11 @@ import { addScreen } from './screens'
 import { Page } from './page'
 import { Button } from 'react-native-paper'
 import { TextInputAdorned, TextInputDebounced } from './text-input'
-import { useRefreshWhen } from './hooks'
 import { palette } from 'config/palette'
-import Sugar from 'sugar'
-import { raiseLater } from './local-events'
 import { FullWidthPressable } from './FullWidthPressable'
+import { useRefreshWhen } from './hooks'
+import { raiseLater } from './local-events'
+import Sugar from 'sugar'
 
 export function IconInput({ value, onChange, ...props }) {
     return (
@@ -47,7 +47,7 @@ const IconChooser = React.forwardRef(function IconChooser(
     return (
         <FullWidthPressable onPress={showChooser}>
             <Box ref={ref} mt="m" mb="s" alignItems="center" width="100%">
-                <Icon icon={value} size={64} color="white" />
+                <Icon icon={value} size={56} color="white" />
                 <View>
                     <View style={styles.more}>
                         <Text variant="action">Change</Text>
@@ -97,6 +97,7 @@ const ChooseIcon = addScreen(
                     onChangeText={setSearch}
                 />
                 <FlatList
+                    keyboardShouldPersistTaps="handled"
                     data={icons}
                     style={{ flex: 1 }}
                     keyExtractor={(item, index) => item[0] || index || ''}
@@ -106,10 +107,10 @@ const ChooseIcon = addScreen(
                                 flexDirection="row"
                                 justifyContent="space-around"
                                 alignItems="center">
-                                {group.map(icon => {
+                                {group.map((icon, index) => {
                                     return (
                                         <SelectableIcon
-                                            key={icon}
+                                            key={icon || index}
                                             icon={icon}
                                         />
                                     )

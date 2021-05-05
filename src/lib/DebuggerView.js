@@ -8,15 +8,15 @@ import { raiseLater } from './local-events'
 let debuggers = []
 
 export function addDebugger(name, press, options) {
-    debuggers.splice(
-        debuggers.findIndex(d => d.name === name),
-        1,
-    )
-    debuggers.push({ name, press, ...options })
+    debuggers = [
+        ...debuggers.filter(d => d.name !== name),
+        { name, press, ...options },
+    ]
     raiseLater('debuggers-changed')
 }
 
 export function DebuggerView() {
+    console.log('LOG>>>', debuggers)
     useRefreshWhen('debuggers-changed')
     return (
         <View style={StyleSheet.absoluteFill} pointerEvents="box-none">

@@ -3,9 +3,13 @@ import { TextInput } from 'react-native-paper'
 import styled from 'styled-components/native'
 import debounce from 'lodash-es/debounce'
 import { StyleSheet, View } from 'react-native'
+import { IconButton } from './icons'
+import { palette } from '../config/palette'
+import { Box } from '../components/Theme'
 
 export const InputContainer = styled.View`
     flex-direction: row;
+    align-items: center;
 `
 export const Input = styled.TextInput`
     flex: 1;
@@ -20,7 +24,80 @@ const styles = StyleSheet.create({
     helperText: {
         fontSize: 12,
     },
+    numberInput: {
+        fontSize: 24,
+        color: palette.all.app.color,
+        textAlign: 'center',
+    },
 })
+
+export function Number({
+    minimum = 0,
+    maximum,
+    Component = Input,
+    value,
+    onChangeText = () => {},
+    ...props
+}) {
+    return (
+        <View>
+            <TextInput
+                value={`${value}`}
+                onChangeText={change}
+                {...props}
+                render={inputProps => {
+                    return (
+                        <Box
+                            flexDirection="row"
+                            mt="l"
+                            pl="xs"
+                            pr="xs"
+                            alignItems="center">
+                            <Box flexGrow={1} />
+                            <AdornmentContainer>
+                                <IconButton
+                                    onPress={decrement}
+                                    color={palette.all.app.accent}
+                                    icon="minus"
+                                />
+                            </AdornmentContainer>
+                            <Component
+                                {...inputProps}
+                                style={styles.numberInput}
+                            />
+                            <AdornmentContainer>
+                                <IconButton
+                                    onPress={increment}
+                                    color={palette.all.app.accent}
+                                    icon="plus"
+                                />
+                            </AdornmentContainer>
+                            <Box flexGrow={1} />
+                        </Box>
+                    )
+                }}
+            />
+        </View>
+    )
+    function increment() {
+        change(+value + 1)
+    }
+
+    function decrement() {
+        change(+value - 1)
+    }
+
+    function change(value) {
+        value = +value
+        if (value < minimum || isNaN(value)) {
+            value = minimum
+        }
+        if (value > maximum) {
+            value = maximum
+        }
+        onChangeText(`${value}`)
+    }
+}
 
 export function TextInputAdorned({
     left,

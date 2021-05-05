@@ -11,6 +11,7 @@ export const palette = {
             backgroundColor: '#15383d',
             darkPanel: '#1d122c',
             color: '#fff',
+            mutedColor: '#fff6',
             accent: '#ff8811',
             secondary: '#f90093',
             headerTintColor: '#fff6',
