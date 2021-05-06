@@ -16,7 +16,6 @@ export function addDebugger(name, press, options) {
 }
 
 export function DebuggerView() {
-    console.log('LOG>>>', debuggers)
     useRefreshWhen('debuggers-changed')
     return (
         <View style={StyleSheet.absoluteFill} pointerEvents="box-none">

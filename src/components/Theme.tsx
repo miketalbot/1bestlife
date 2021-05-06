@@ -66,6 +66,12 @@ const theme = {
             lineHeight: 24,
             color: 'text',
         },
+
+        muted: {
+            fontSize: 16,
+            lineHeight: 24,
+            color: 'textMuted',
+        },
         button: {
             fontSize: 15,
             color: 'text',
@@ -78,6 +84,12 @@ const theme = {
         },
         action: {
             fontSize: 14,
+            color: 'primary',
+        },
+        buttonCaption: {
+            marginTop: 's',
+            fontSize: 12,
+            lineHeight: 12,
             color: 'primary',
         },
         label: {
@@ -102,6 +114,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => (
 
 export type Theme = typeof theme
 export const Box = createBox<Theme>()
+export function ListItemBox({ children, ...props }) {
+    return (
+        <Box alignItems="center" flexDirection="row" width="100%" {...props}>
+            {children}
+        </Box>
+    )
+}
 export const Text = createText<Theme>()
 export const useTheme = () => useReTheme<Theme>()
 type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle }

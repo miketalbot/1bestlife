@@ -5,7 +5,7 @@ import React from 'react'
 
 export function WeeklyEditor({ settings }) {
     const refresh = useRefresh()
-    settings.weekTimes = settings.weekTimes || 1
+    settings.weekTimes = settings.weekTimes ?? 1
     return (
         <PropertyBox>
             <Number

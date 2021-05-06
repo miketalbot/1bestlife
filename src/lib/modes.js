@@ -14,10 +14,10 @@ const modeStyles = {
     },
 }
 
-export function useModes(modes, current) {
+export function useModes(modes, current, length) {
     return useMemo(() => {
         return (
-            <ToggleGroup>
+            <ToggleGroup length={length}>
                 {Object.entries(modes).map(([name, contents]) => {
                     const selected = current === name || current[name]
                     return contents({

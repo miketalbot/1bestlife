@@ -10,7 +10,7 @@ export function TaskType({ value, onChange = () => {} }) {
                 selected={type === 'todo'}
                 onPress={() => setType('todo')}
                 mode="outlined">
-                Task
+                To Do
             </ToggleButton>
             <ToggleButton
                 icon="calendar"

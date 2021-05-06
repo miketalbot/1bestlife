@@ -1,49 +1,95 @@
-import { TextInput } from 'react-native-paper'
+import { Chip } from 'react-native-paper'
 import { Box, Text } from 'components/Theme'
-import { Icon } from 'lib/icons'
-import { palette } from 'config/palette'
 import React from 'react'
-import { FullWidthPressable } from '../lib/FullWidthPressable'
 import { ReminderConfiguration } from './ReminderConfiguration'
+import { ensureArray } from '../lib/ensure-array'
+import { StyleSheet } from 'react-native'
+import { ReminderEdit } from './ReminderEdit'
+import { CustomTextInput } from '../lib/CustomTextInput'
+import { InputChevron } from '../lib/InputChevron'
 
-export function Reminders({ settings }) {
+const styles = StyleSheet.create({
+    chip: {
+        backgroundColor: 'rgba(255,255,255,0.1)',
+    },
+})
+
+export function Reminders({ settings, refresh }) {
     const reminders = getReminders(settings)
     return (
-        <TextInput
+        <CustomTextInput
             label="Reminders"
+            onPress={configure}
             value={reminders}
-            render={({ value }) => {
-                return (
-                    <FullWidthPressable onPress={configure}>
-                        <Box
-                            mt="l"
-                            pt="s"
-                            pl="input"
-                            flexDirection="row"
-                            alignItems="center">
+            render={({ value }) => (
+                <>
+                    <Box mb="s" flexDirection="row" flexWrap="wrap">
+                        {!!value.length &&
+                            value.map((reminder, index) => {
+                                return (
+                                    <Box
+                                        key={reminder.id || index}
+                                        mr="s"
+                                        mb="s">
+                                        <Chip
+                                            onPress={edit(reminder)}
+                                            style={styles.chip}
+                                            icon={reminder.icon}>
+                                            {reminder.description}
+                                        </Chip>
+                                    </Box>
+                                )
+                            })}
+                        {!value.length && (
                             <Box>
-                                <Text variant="body">{value}</Text>
+                                <Text variant="muted">No reminders</Text>
                             </Box>
-                            <Box flexGrow={1} />
-                            <Box pr="s">
-                                <Icon
-                                    size={16}
-                                    icon="chevron-right"
-                                    color={palette.all.app.accent}
-                                />
-                            </Box>
-                        </Box>
-                    </FullWidthPressable>
-                )
-            }}
+                        )}
+                    </Box>
+                    <InputChevron mb="s" />
+                </>
+            )}
         />
     )
 
+    function edit(reminder) {
+        return function () {
+            if (!reminder.id) {
+                ReminderConfiguration.navigate({ settings, refresh })
+            } else {
+                ReminderEdit.navigate({
+                    isNew: false,
+                    reminder,
+                    deleteReminder,
+                    settings,
+                    refresh,
+                })
+            }
+        }
+    }
+
+    function deleteReminder(reminder) {
+        settings.reminders = settings.reminders.filter(r => r !== reminder)
+        refresh()
+    }
+
     function configure() {
-        ReminderConfiguration.navigate({ settings })
+        ReminderConfiguration.navigate({ settings, refresh })
     }
 }
 
 function getReminders(settings) {
-    return '(Standard reminders)'
+    const output = []
+    if (settings.standard !== false) {
+        output.push({ description: 'Standard Reminders' })
+    }
+    const other = ensureArray(settings.reminders).filter(
+        reminder =>
+            reminder.type === settings.type &&
+            reminder.dateMode === settings.dateMode,
+    )
+    if (other.length) {
+        output.push(...other)
+    }
+    return output
 }

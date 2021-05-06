@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
 import { raise, useLocalEvent } from './lib/local-events'
-import merge from 'lodash-es/merge'
-import { cloneDeep as clone, isEqual } from 'lodash-es'
+import merge from 'lodash-es/mergeWith'
+import { cloneDeep as clone } from 'lodash-es'
 import { ensureArray } from './lib/ensure-array'
 import { typeDef } from './tasks/register-task'
 
@@ -73,6 +73,7 @@ export function useUser() {
             return loggedInUser.uid
         },
         using(fn) {
+            const saved = JSON.stringify(user)
             const toUpdate = clone(user)
             let callResult = fn(toUpdate)
             if (callResult?.then) {
@@ -86,9 +87,14 @@ export function useUser() {
             }
 
             function update() {
-                if (!isEqual(user, toUpdate)) {
-                    merge(user, toUpdate)
-                    result.save()
+                if (JSON.stringify(toUpdate) !== saved) {
+                    merge(user, toUpdate, (current, updated) => {
+                        if (Array.isArray(updated)) {
+                            return updated
+                        }
+                    })
+                    console.log('willSave')
+                    result.save().catch(console.error)
                 }
             }
         },

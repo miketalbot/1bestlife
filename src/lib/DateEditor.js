@@ -1,14 +1,15 @@
 import { palette } from '../config/palette'
 import { Box, Text } from '../components/Theme'
-import React, { useState } from 'react'
+import React from 'react'
 import { addScreen } from './screens'
 import { Page } from './page'
 import { Button } from 'react-native-paper'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import Sugar from 'sugar'
-import { setFromEvent } from './set-from-event'
+import { convertToDate, setFromEvent } from './set-from-event'
 import { If } from './switch'
 import { mode, useModes } from './modes'
+import { useDirty } from './dirty'
 
 export const DateEditor = addScreen(
     function DateEditor({
@@ -17,8 +18,10 @@ export const DateEditor = addScreen(
             params: { settings, refresh = () => {} },
         },
     }) {
-        const [date, setDate] = useState(settings.byWhen)
-        const [dateMode, setMode] = useState(settings.dateMode || 'by')
+        const dirty = useDirty()
+        dirty.useAlert(configure)
+        const [date, setDate] = dirty.useState(settings.byWhen || new Date())
+        const [dateMode, setMode] = dirty.useState(settings.dateMode || 'by')
         const items = useModes(
             {
                 by: mode('By', update),
@@ -44,8 +47,8 @@ export const DateEditor = addScreen(
                         )}
                         textColor={palette.all.app.color}
                         display="spinner"
-                        onChange={setFromEvent(setDate)}
-                        value={date}
+                        onChange={setFromEvent(convertToDate(setDate))}
+                        value={new Date(date)}
                     />
                 </Box>
                 <If truthy={dateMode !== 'by'}>
@@ -58,8 +61,8 @@ export const DateEditor = addScreen(
                             textColor={palette.all.app.color}
                             display="spinner"
                             mode="time"
-                            value={date}
-                            onChange={setFromEvent(setDate)}
+                            value={new Date(date)}
+                            onChange={setFromEvent(convertToDate(setDate))}
                             minimumDate={Sugar.Date.create()}
                         />
                     </Box>
@@ -72,8 +75,9 @@ export const DateEditor = addScreen(
         }
 
         function configure() {
+            dirty.clean()
             settings.dateMode = dateMode
-            settings.byWhen = date
+            settings.byWhen = 0 + +date
             refresh()
             navigation.goBack()
         }

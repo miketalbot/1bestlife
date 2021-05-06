@@ -6,7 +6,7 @@ import { Box } from '../components/Theme'
 import { Button } from 'react-native-paper'
 import { palette } from '../config/palette'
 import { Icon } from './icons'
-import { FullWidthPressable } from './FullWidthPressable'
+import { FullWidthByPercentPressable } from './FullWidthPressable'
 
 const styles = StyleSheet.create({
     left: {
@@ -14,21 +14,18 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: theme.roundness,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
-        flexGrow: 1,
     },
     right: {
         borderTopRightRadius: theme.roundness,
         borderBottomRightRadius: theme.roundness,
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0,
-        flexGrow: 1,
     },
     middle: {
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
-        flexGrow: 1,
     },
     selected: {
         backgroundColor: palette.all.app.accent,
@@ -117,17 +114,21 @@ export function ToggleBox({
                 selected && boxStyles.selected,
                 ...ensureArray(props.style),
             ]}>
-            <FullWidthPressable {...{ onPress, onPressIn, onPressOut }}>
+            <FullWidthByPercentPressable
+                flexDirection="column"
+                {...{ onPress, onPressIn, onPressOut }}>
                 {toRender}
-            </FullWidthPressable>
+            </FullWidthByPercentPressable>
         </Box>
     )
 }
 
-export function ToggleGroup({ children }) {
+export function ToggleGroup({ children, length, ...props }) {
     const modified = React.Children.toArray(children)
     const widthStyle = useMemo(() => {
-        return { width: `${((1 / modified.length) * 100).toFixed(0)}%` }
+        return {
+            width: `${((1 / (length || modified.length)) * 100).toFixed(2)}%`,
+        }
     }, [modified.length])
     for (let i = 0, l = modified.length; i < l; i++) {
         const child = modified[i]
@@ -165,7 +166,7 @@ export function ToggleGroup({ children }) {
         }
     }
     return (
-        <Box flexDirection="row" width="100%" alignItems="stretch">
+        <Box {...props} flexDirection="row" width="100%" alignItems="stretch">
             {modified.map(child => {
                 return child
             })}

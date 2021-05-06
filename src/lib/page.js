@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Keyboard, StyleSheet, View } from 'react-native'
+import { Keyboard, ScrollView, StyleSheet, View } from 'react-native'
 import { palette } from '../config/palette'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Settings } from './SettingsContext'
+import { PropertyBox } from './PropertyBox'
 
 const styles = StyleSheet.create({
     page: {
@@ -23,7 +25,27 @@ const styles = StyleSheet.create({
     },
 })
 
-export function Page({ children, footer, style: baseStyle, ...props }) {
+export function ScrollingPage({ children, ...props }) {
+    return (
+        <Page {...props}>
+            <ScrollView keyboardShouldPersistTaps="handled">
+                <PropertyBox pt="s" pl="s" pr="s" width="100%">
+                    {children}
+                </PropertyBox>
+            </ScrollView>
+        </Page>
+    )
+}
+
+export function Page({
+    children,
+    footer,
+    style: baseStyle,
+    settings,
+    refresh,
+    commit,
+    ...props
+}) {
     const [height, setHeight] = useState(0)
     const [footerHeight, setFooterHeight] = useState(0)
     const insets = useSafeAreaInsets()
@@ -52,25 +74,30 @@ export function Page({ children, footer, style: baseStyle, ...props }) {
         }
     }, [])
     return (
-        <View {...props} style={[styles.page, baseStyle]}>
-            {children}
-            <View style={style} />
-            <View style={footerStyle} />
-            {height === 0 && <View style={safeArea} />}
-            {!!footer && (
-                <View pointerEvents="box-none" style={[styles.overlay]}>
-                    <View pointerEvents="box-none" style={{ flexGrow: 1 }} />
-                    <View
-                        pointerEvents="auto"
-                        onLayout={updateFooter}
-                        style={styles.footer}>
-                        {footer}
+        <Settings settings={settings} refresh={refresh} commit={commit}>
+            <View {...props} style={[styles.page, baseStyle]}>
+                {children}
+                <View style={style} />
+                <View style={footerStyle} />
+                {height === 0 && <View style={safeArea} />}
+                {!!footer && (
+                    <View pointerEvents="box-none" style={[styles.overlay]}>
+                        <View
+                            pointerEvents="box-none"
+                            style={{ flexGrow: 1 }}
+                        />
+                        <View
+                            pointerEvents="auto"
+                            onLayout={updateFooter}
+                            style={styles.footer}>
+                            {footer}
+                        </View>
+                        <View style={style} />
+                        {height === 0 && <View style={safeArea} />}
                     </View>
-                    <View style={style} />
-                    {height === 0 && <View style={safeArea} />}
-                </View>
-            )}
-        </View>
+                )}
+            </View>
+        </Settings>
     )
 
     function updateFooter({

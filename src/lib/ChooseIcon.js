@@ -16,6 +16,9 @@ import { FullWidthPressable } from './FullWidthPressable'
 import { useRefreshWhen } from './hooks'
 import { raiseLater } from './local-events'
 import Sugar from 'sugar'
+import { FooterButtons } from './FooterButtons'
+import { useUser } from '../user-context'
+import { useDirty } from './dirty'
 
 export function IconInput({ value, onChange, ...props }) {
     return (
@@ -37,6 +40,11 @@ const styles = StyleSheet.create({
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'space-around',
+    },
+    recent: {
+        position: 'absolute',
+        bottom: 0,
+        right: -16,
     },
 })
 
@@ -73,22 +81,36 @@ const ChooseIcon = addScreen(
             params: { value, onChange },
         },
     }) {
+        const user = useUser()
+        const dirty = useDirty()
+        dirty.useAlert()
+        user.recentIcons = user.recentIcons || []
         const selectedIcon = useRef(value)
         const [search, setSearch] = useState('')
-        const icons = useMemo(() => {
+        const [icons, recent] = useMemo(() => {
+            let recentIconSet = new Set(user.recentIcons)
+            const recentList = user.recentIcons.filter(i =>
+                i.includes(search.toLowerCase()),
+            )
             let basicList = iconSet
-                .filter(i => i.includes(search.toLowerCase()))
+                .filter(
+                    i =>
+                        i.includes(search.toLowerCase()) &&
+                        !recentIconSet.has(i),
+                )
                 .sort()
-            return basicList.inGroupsOf(3)
+            return [[...recentList, ...basicList].inGroupsOf(3), recentIconSet]
         }, [search])
         return (
             <Page
                 footer={
-                    <Box mt="s" mb="s" pl="l" pr="l">
-                        <Button onPress={choose} mode="contained">
-                            Choose
-                        </Button>
-                    </Box>
+                    <FooterButtons>
+                        <Box flex={1}>
+                            <Button onPress={choose} mode="contained">
+                                Choose
+                            </Button>
+                        </Box>
+                    </FooterButtons>
                 }>
                 <TextInputDebounced
                     label="Search"
@@ -110,6 +132,7 @@ const ChooseIcon = addScreen(
                                 {group.map((icon, index) => {
                                     return (
                                         <SelectableIcon
+                                            recent={recent.has(icon)}
                                             key={icon || index}
                                             icon={icon}
                                         />
@@ -123,11 +146,16 @@ const ChooseIcon = addScreen(
         )
 
         function choose() {
+            dirty.clean()
+            user.recentIcons = [selectedIcon.current, ...user.recentIcons]
+                .unique()
+                .slice(0, 12)
+            user.save()
             onChange(selectedIcon.current)
             navigation.goBack()
         }
 
-        function SelectableIcon({ icon }) {
+        function SelectableIcon({ icon, recent }) {
             useRefreshWhen(`changed.icon.${icon}`)
             return (
                 !!icon && (
@@ -143,6 +171,15 @@ const ChooseIcon = addScreen(
                                             : palette.all.app.color
                                     }
                                 />
+                                {recent && (
+                                    <Box style={styles.recent}>
+                                        <Icon
+                                            icon="clock"
+                                            size={12}
+                                            color={palette.all.app.mutedColor}
+                                        />
+                                    </Box>
+                                )}
                             </Box>
                             <Text variant="iconTitle">
                                 {Sugar.String.titleize(icon)}
@@ -158,6 +195,7 @@ const ChooseIcon = addScreen(
             selectedIcon.current = icon
             raiseLater(`changed.icon.${icon}`)
             raiseLater(`changed.icon.${existing}`)
+            dirty.makeDirty()
         }
     },
     { options: { headerTitle: 'Choose Icon' } },

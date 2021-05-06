@@ -1,80 +1,111 @@
 import { addScreen } from '../lib/screens'
-import { Page } from '../lib/page'
-import React, { useState } from 'react'
+import { ScrollingPage } from '../lib/page'
+import React, { useEffect, useState } from 'react'
 import { addDebugger } from '../lib/DebuggerView'
 import { Box, Text } from '../components/Theme'
 import { Button } from 'react-native-paper'
-import { ScrollView } from 'react-native'
 import { Checkbox } from '../lib/Checkbox'
-import { PropertyBox } from '../lib/PropertyBox'
-
-export const ReminderEdit = addScreen(
-    function ReminderEdit({
-        route: {
-            params: { reminder, isNew, addReminder },
-        },
-    }) {
-        return (
-            <Page
-                footer={
-                    <Box mt="s" mb="s" pl="l" pr="l">
-                        <Button mode="contained">
-                            {isNew ? 'Add Reminder' : 'Update Reminder'}
-                        </Button>
-                    </Box>
-                }>
-                <ScrollView keyboardShouldPersistTaps="handled">
-                    <PropertyBox pt="s" pl="m" pr="m"></PropertyBox>
-                </ScrollView>
-            </Page>
-        )
-    },
-    {
-        options({
-            route: {
-                params: { isNew },
-            },
-        }) {
-            return { headerTitle: isNew ? 'New Reminder' : 'Edit Reminder' }
-        },
-    },
-)
+import { ReminderEdit } from './ReminderEdit'
+import { Icon } from '../lib/icons'
+import { palette } from '../config/palette'
+import { FullWidthPressable } from '../lib/FullWidthPressable'
+import { useRefresh } from '../lib/hooks'
+import { InputChevron } from '../lib/InputChevron'
 
 export const ReminderConfiguration = addScreen(
     function ReminderConfiguration({
         route: {
-            params: { settings },
+            params: { settings, refresh: parentRefresh },
         },
     }) {
+        const refresh = useRefresh()
         const [standard, setStandard] = useState(settings.standard !== false)
         const [reminders, setReminders] = useState(settings.reminders || [])
+        settings.reminders = reminders
+        settings.standard = standard
+        const toDisplay = reminders.filter(reminder => {
+            return (
+                reminder.type === settings.type &&
+                reminder.dateMode === settings.dateMode
+            )
+        })
+        useEffect(() => {
+            parentRefresh()
+        }, [JSON.stringify([settings.reminders, settings.standard])])
         return (
-            <Page
-                footer={
-                    <Box mt="s" mb="s" pl="l" pr="l">
-                        <Button mode="contained">Set Reminders</Button>
-                    </Box>
-                }>
-                <ScrollView keyboardShouldPersistTaps="handled">
-                    <PropertyBox pt="s" pl="m" pr="m">
-                        <Checkbox
-                            text="All standard reminders"
-                            value={standard}
-                            onChanged={setStandard}
-                        />
-                        <Box mt="m">
-                            <Text variant="label">Custom Reminders</Text>
-                        </Box>
-                        <Button onPress={addReminder} mode="outlined">
-                            + Reminder
-                        </Button>
-                    </PropertyBox>
-                </ScrollView>
-            </Page>
+            <ScrollingPage settings={settings} refresh={refresh}>
+                <Checkbox
+                    text="All standard reminders"
+                    value={standard}
+                    onChanged={setStandard}
+                />
+                <Box mt="m">
+                    <Text variant="label">Custom Reminders</Text>
+                </Box>
+                <Box mt="s" width="100%">
+                    {toDisplay.map(reminder => {
+                        const { id, icon, description } = reminder
+                        return (
+                            <FullWidthPressable
+                                key={id}
+                                onPress={edit(reminder)}>
+                                <Box
+                                    mb="s"
+                                    flexDirection="row"
+                                    width="100%"
+                                    alignItems="center">
+                                    <Box mr="s">
+                                        <Icon
+                                            color={palette.all.app.color}
+                                            icon={icon}
+                                        />
+                                    </Box>
+                                    <Box mr="s">
+                                        <Text variant="body">
+                                            {description}
+                                        </Text>
+                                    </Box>
+                                    <InputChevron />
+                                </Box>
+                            </FullWidthPressable>
+                        )
+                    })}
+                </Box>
+                <Button onPress={newReminder} mode="outlined">
+                    + Reminder
+                </Button>
+            </ScrollingPage>
         )
 
-        function addReminder() {
-            ReminderEdit.navigate({ isNew: true, reminder: {} })
+        function edit(reminder) {
+            return function () {
+                ReminderEdit.navigate({
+                    isNew: false,
+                    reminder,
+                    addReminder,
+                    deleteReminder,
+                    settings,
+                    refresh,
+                })
+            }
+        }
+
+        function newReminder() {
+            ReminderEdit.navigate({
+                isNew: true,
+                reminder: {},
+                addReminder,
+                settings,
+                refresh,
+            })
+        }
+
+        function deleteReminder(reminder) {
+            setReminders(current => current.filter(r => r !== reminder))
+        }
+
+        function addReminder(reminder) {
+            setReminders(current => [...current, reminder])
         }
     },
     {
@@ -82,6 +113,15 @@ export const ReminderConfiguration = addScreen(
     },
 )
 
-addDebugger('Reminders', () => {
-    ReminderConfiguration.navigate({ settings: {} })
+addDebugger('Reminders 1', () => {
+    ReminderConfiguration.navigate({
+        settings: { type: 'todo', dateMode: 'by' },
+        refresh: () => {},
+    })
+})
+addDebugger('Reminders 2', () => {
+    ReminderConfiguration.navigate({
+        settings: { type: 'todo', dateMode: 'at' },
+        refresh: () => {},
+    })
 })

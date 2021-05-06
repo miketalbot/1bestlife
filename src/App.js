@@ -40,8 +40,8 @@ const App = () => {
         <View style={styles.outer}>
             <NavigationContainer
                 key={`${screens._id}+${screens.length}`}
-                ref={setStackNavigator}
                 style={styles.outer}
+                ref={setStackNavigator}
                 theme={DarkTheme}>
                 <stack.Navigator
                     screenOptions={{

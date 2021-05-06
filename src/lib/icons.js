@@ -65,6 +65,7 @@ export function IconButton({
     })
     return (
         <Pressable
+            hitSlop={24}
             onPress={onPress}
             onPressIn={highlight}
             onPressOut={unhighlight}>

@@ -27,7 +27,7 @@ export function DailyEditor({ settings }) {
         },
         settings.days,
     )
-    settings.dayTimes = settings.dayTimes || 1
+    settings.dayTimes = settings.dayTimes ?? 1
     return (
         <PropertyBox>
             {days}

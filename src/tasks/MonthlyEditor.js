@@ -85,7 +85,7 @@ export function MonthlyEditor({ settings }) {
         },
         settings.months,
     )
-    settings.monthTimes = settings.monthTimes || 1
+    settings.monthTimes = settings.monthTimes ?? 1
     return (
         <PropertyBox>
             {months}
