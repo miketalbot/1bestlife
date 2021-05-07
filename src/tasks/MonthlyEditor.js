@@ -5,6 +5,7 @@ import { Number } from '../lib/text-input'
 import React from 'react'
 import { Text } from 'react-native'
 import { Box } from '../components/Theme'
+import { ListEditor } from './ListEditor'
 
 function Rotated({ children, style }) {
     return (
@@ -86,6 +87,7 @@ export function MonthlyEditor({ settings }) {
         settings.months,
     )
     settings.monthTimes = settings.monthTimes ?? 1
+    settings.habitSettings = settings.habitSettings || {}
     return (
         <PropertyBox>
             {months}
@@ -96,6 +98,12 @@ export function MonthlyEditor({ settings }) {
                     settings.monthTimes = +value
                     refresh()
                 }}
+            />
+            <ListEditor
+                label="Habit List"
+                group="habitGroups"
+                groupLabel="Habit Lists"
+                settings={settings.habitSettings}
             />
         </PropertyBox>
     )

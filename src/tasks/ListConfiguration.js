@@ -18,24 +18,30 @@ import { TouchableWithoutFeedback } from 'react-native'
 export const ListConfiguration = addScreen(
     function ListConfiguration({
         route: {
-            params: { settings, refresh: parentRefresh },
+            params: {
+                due,
+                label = 'Lists',
+                settings,
+                refresh: parentRefresh,
+                group = 'lists',
+            },
         },
     }) {
         const user = useUser()
         useEffect(() => {
-            if (!user.lists) {
+            if (!user[group]) {
                 user.using(() => {
-                    user.lists = user.lists || []
+                    user[group] = user[group] || []
                 })
             }
         }, [user])
         const refresh = useRefresh()
 
-        const lists = user.lists || []
+        const lists = user[group] || []
         return (
             <ScrollingPage settings={settings} refresh={refresh}>
                 <Box mt="m">
-                    <Text variant="label">To Do Lists</Text>
+                    <Text variant="label">{label}</Text>
                 </Box>
                 <Box mt="s" width="100%">
                     {lists.map(list => {
@@ -80,7 +86,7 @@ export const ListConfiguration = addScreen(
                             } else {
                                 settings.listId = id
                                 user.using(update => {
-                                    update.lastListId = id
+                                    update[`${group}_lastListId`] = id
                                 })
                             }
                             refresh()
@@ -99,6 +105,7 @@ export const ListConfiguration = addScreen(
                 ListEdit.navigate({
                     isNew: false,
                     list,
+                    due,
                     addList,
                     deleteList,
                     settings,
@@ -112,6 +119,7 @@ export const ListConfiguration = addScreen(
                 isNew: true,
                 list: { id: uid() },
                 addList,
+                due,
                 settings,
                 refresh,
             })
@@ -119,16 +127,14 @@ export const ListConfiguration = addScreen(
 
         async function deleteList(list) {
             await user.using(user => {
-                console.log('LOG>>>', list.id, user.lists.map('id').join(','))
-                user.lists = user.lists.filter(l => l.id !== list.id)
-                console.log('LOG>>> after', user.lists.map('id').join(','))
+                user[group] = user[group].filter(l => l.id !== list.id)
             })
             refresh()
         }
 
         async function addList(list) {
             await user.using(user => {
-                user.lists.push(list)
+                user[group].push(list)
             })
             refresh()
         }

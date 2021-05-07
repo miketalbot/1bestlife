@@ -85,7 +85,7 @@ export function TimedTask({ settings }) {
                                     color={
                                         settings.timed
                                             ? palette.all.app.darkColor
-                                            : palette.all.app.mutedColor
+                                            : palette.all.app.accent
                                     }
                                     icon="stopwatch-20"
                                 />

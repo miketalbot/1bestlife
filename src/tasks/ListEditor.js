@@ -1,4 +1,3 @@
-import { useSettings } from '../lib/SettingsContext'
 import { useUser } from '../user-context'
 import { useRefresh } from '../lib/hooks'
 import { CustomTextInput } from '../lib/CustomTextInput'
@@ -10,9 +9,16 @@ import { ListConfiguration } from './ListConfiguration'
 import React from 'react'
 import { Button } from 'react-native-paper'
 
-export function ListEditor() {
-    const { settings } = useSettings()
-    const { lists = [], lastListId } = useUser()
+export function ListEditor({
+    group = 'lists',
+    label = 'List',
+    groupLabel = 'Lists',
+    due = false,
+    settings,
+}) {
+    const user = useUser()
+    const lists = user[group] || []
+    const lastListId = user[`${group}_lastListId`]
     const currentList = lists.find(item => item.id === settings.listId)
     if (!currentList) {
         settings.listId = undefined
@@ -20,7 +26,7 @@ export function ListEditor() {
     const lastList = lists.find(item => item.id === lastListId)
     const refresh = useRefresh()
     return (
-        <CustomTextInput onPress={showLists} label="List" value={'true'}>
+        <CustomTextInput onPress={showLists} label={label} value={'true'}>
             <Box mb="s" flexDirection="row" alignItems="center" width="100%">
                 {!settings.listId && (
                     <ListItemBox flex={1} minWidth="70%" maxWidth="70%">
@@ -83,6 +89,9 @@ export function ListEditor() {
         ListConfiguration.navigate({
             settings,
             refresh,
+            group,
+            due,
+            label: groupLabel,
         })
     }
 }

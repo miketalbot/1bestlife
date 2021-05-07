@@ -17,6 +17,7 @@ export const ListEdit = addScreen(
         navigation,
         route: {
             params: {
+                due,
                 list,
                 isNew,
                 addList,
@@ -82,11 +83,18 @@ export const ListEdit = addScreen(
                         value={motivation}
                         onChangeText={setMotivation}
                     />
-                    <Box mt="m">
-                        <Text variant="label">Complete the list</Text>
-                    </Box>
+                    {!!due && (
+                        <Box mt="m">
+                            <Text variant="label">Complete the list</Text>
+                        </Box>
+                    )}
 
-                    <TodoEditor settings={settings} showListEditor={false} />
+                    {!!due && (
+                        <TodoEditor
+                            settings={settings}
+                            showListEditor={false}
+                        />
+                    )}
                 </ScrollingPage>
             </dirty.Provider>
         )

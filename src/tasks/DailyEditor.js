@@ -3,6 +3,7 @@ import { mode, useModes } from '../lib/modes'
 import { PropertyBox } from '../lib/PropertyBox'
 import React from 'react'
 import { Number } from '../lib/text-input'
+import { ListEditor } from './ListEditor'
 
 export function DailyEditor({ settings }) {
     const refresh = useRefresh()
@@ -28,6 +29,7 @@ export function DailyEditor({ settings }) {
         settings.days,
     )
     settings.dayTimes = settings.dayTimes ?? 1
+    settings.habitSettings = settings.habitSettings || {}
     return (
         <PropertyBox>
             {days}
@@ -38,6 +40,12 @@ export function DailyEditor({ settings }) {
                     settings.dayTimes = +value
                     refresh()
                 }}
+            />
+            <ListEditor
+                label="Habit List"
+                group="habitGroups"
+                groupLabel="Habit Lists"
+                settings={settings.habitSettings}
             />
         </PropertyBox>
     )

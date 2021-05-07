@@ -36,6 +36,7 @@ export function TodoEditor({
     const dirty = useDirty(parentDirty)
     settings.byWhen = settings.byWhen || Sugar.Date.create('next week')
     settings.dateMode = settings.dateMode || 'by'
+    settings.todoSettings = settings.todoSettings || {}
     const formattedDate = Sugar.Date.format(
         Sugar.Date.create(settings.byWhen),
         settings.dateMode !== 'by' ? '{short} {time}' : '{medium}',
@@ -94,7 +95,14 @@ export function TodoEditor({
                     </TouchableOpacity>
                 </ToggleBox>
             </ToggleGroup>
-            {!!showListEditor && <ListEditor />}
+            {!!showListEditor && (
+                <ListEditor
+                    label="To Do List"
+                    due={true}
+                    group="lists"
+                    settings={settings.todoSettings}
+                />
+            )}
         </Box>
     )
 
