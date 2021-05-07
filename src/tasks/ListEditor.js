@@ -21,7 +21,7 @@ export function ListEditor() {
     const refresh = useRefresh()
     return (
         <CustomTextInput onPress={showLists} label="List" value={'true'}>
-            <Box mb="m" flexDirection="row" alignItems="center" width="100%">
+            <Box mb="s" flexDirection="row" alignItems="center" width="100%">
                 {!settings.listId && (
                     <ListItemBox flex={1} minWidth="70%" maxWidth="70%">
                         <Text variant="muted">No List</Text>

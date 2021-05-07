@@ -8,6 +8,7 @@ export const palette = {
             fontWeight: '100',
         },
         app: {
+            inputBorder: '#fff2',
             backgroundColor: '#15383d',
             darkPanel: '#1d122c',
             color: '#fff',

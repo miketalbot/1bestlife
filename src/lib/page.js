@@ -29,7 +29,7 @@ export function ScrollingPage({ children, ...props }) {
     return (
         <Page {...props}>
             <ScrollView keyboardShouldPersistTaps="handled">
-                <PropertyBox pt="s" pl="s" pr="s" width="100%">
+                <PropertyBox pt="xs" pl="s" pr="s" width="100%">
                     {children}
                 </PropertyBox>
             </ScrollView>

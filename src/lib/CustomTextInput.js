@@ -20,12 +20,7 @@ export function CustomTextInput({
             value={value}
             onChangeText={onChangeText}
             render={(...props) => (
-                <Box
-                    mt="l"
-                    pt="s"
-                    pl="input"
-                    flexDirection="row"
-                    alignItems="center">
+                <Box mt="l" pl="input" flexDirection="row" alignItems="center">
                     <Fragment key="rendered">{render(...props)}</Fragment>
                     <Fragment key="children">{children}</Fragment>
                 </Box>

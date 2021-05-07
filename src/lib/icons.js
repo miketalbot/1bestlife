@@ -48,6 +48,7 @@ export function icon(name) {
 export function IconButton({
     icon,
     color,
+    disabled,
     backgroundColor,
     onPress = () => {},
     onPressIn = () => {},
@@ -66,6 +67,7 @@ export function IconButton({
     return (
         <Pressable
             hitSlop={24}
+            disabled={disabled}
             onPress={onPress}
             onPressIn={highlight}
             onPressOut={unhighlight}>

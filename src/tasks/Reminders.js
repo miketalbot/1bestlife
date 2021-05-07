@@ -23,7 +23,7 @@ export function Reminders({ settings, refresh }) {
             value={reminders}
             render={({ value }) => (
                 <>
-                    <Box mb="s" flexDirection="row" flexWrap="wrap">
+                    <Box flexDirection="row" flexWrap="wrap">
                         {!!value.length &&
                             value.map((reminder, index) => {
                                 return (

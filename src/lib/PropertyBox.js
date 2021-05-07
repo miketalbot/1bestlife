@@ -1,7 +1,7 @@
 import { Box } from '../components/Theme'
 import React from 'react'
 
-export function PropertyBox({ children, spacing = 's', ...props }) {
+export function PropertyBox({ children, spacing = 'xs', ...props }) {
     let list = React.Children.toArray(children)
     return (
         <Box {...props}>

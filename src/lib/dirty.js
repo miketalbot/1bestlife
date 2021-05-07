@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocalEvent } from './local-events'
 import { Alert } from 'react-native'
 import { ScreenNavigatorContext } from './screens'
+import { useRefresh } from './hooks'
+import debounce from 'lodash-es/debounce'
 
 export function useDirtyState(initial, dirty) {
     dirty = dirty || useDirty()
@@ -59,6 +61,7 @@ function handleDirty(navigation, dirty, save) {
 export function useDirty(parent = () => {}) {
     const context = useContext(DirtyContext)
     const dirty = useRef()
+    const refresh = useRefresh()
     useEffect(() => {
         dirty.current = false
     }, [])
@@ -71,6 +74,7 @@ export function useDirty(parent = () => {}) {
                     </DirtyContext.Provider>
                 )
             },
+            refresh: debounce(refresh),
             useAlert(save, navigation) {
                 const localNavigation = useContext(ScreenNavigatorContext)
                 useLocalEvent(
@@ -118,6 +122,7 @@ export function useDirty(parent = () => {}) {
         }
         if (parent.makeDirty) {
             parent.makeDirty()
+            parent.refresh()
         }
     }
 }

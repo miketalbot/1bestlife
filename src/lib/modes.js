@@ -3,7 +3,7 @@ import { ToggleBox, ToggleGroup } from './toggle-button'
 import { Box, Text } from '../components/Theme'
 import React, { useMemo } from 'react'
 
-const modeStyles = {
+export const modeStyles = {
     selected: {
         color: palette.all.app.darkColor,
         borderColor: palette.all.app.darkColor,

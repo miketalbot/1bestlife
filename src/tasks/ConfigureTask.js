@@ -7,7 +7,7 @@ import { addDebugger } from 'lib/DebuggerView'
 import { TaskType } from './TaskType'
 import { CategoryInput } from './CategoryInput'
 import { Case, Switch } from 'lib/switch'
-import { Button } from 'react-native-paper'
+import { Button, TextInput } from 'react-native-paper'
 import { IconInput } from 'lib/ChooseIcon'
 import { ScrollingPage } from 'lib/page'
 import { Box } from 'components/Theme'
@@ -18,6 +18,8 @@ import { WeeklyEditor } from './WeeklyEditor'
 import { MonthlyEditor } from './MonthlyEditor'
 import { Settings, SettingsContext } from 'lib/SettingsContext'
 import { Reminders } from './Reminders'
+import { useDirty } from '../lib/dirty'
+import { TimedTask } from './TimedTask'
 
 const styles = StyleSheet.create({
     taskPage: {
@@ -34,84 +36,115 @@ export const ConfigureTask = addScreen(
         route: {
             params: {
                 text,
+                isNew = !removeTask,
                 typeId,
+                task,
+                addTask,
+                removeTask,
                 type: initialType,
                 category: initialCategory,
             },
         },
     }) {
+        task = task || {}
         const refresh = useRefresh()
-        const [category, setCategory] = useState(initialCategory)
-        const [type, setType] = useState(initialType)
-        const [name, setName] = useState(text)
-        const [icon, setIcon] = useState('star')
-        const [settings] = useState({})
+        const dirty = useDirty()
+        dirty.useAlert(commitTask)
+        const [category, setCategory] = useState(
+            task?.category ?? initialCategory,
+        )
+        const [type, setType] = dirty.useState(task?.type ?? initialType)
+        const [name, setName] = dirty.useState(task?.text ?? text)
+        const [icon, setIcon] = dirty.useState(task?.icon ?? 'star')
+        const [motivation, setMotivation] = dirty.useState(
+            task?.motivation ?? '',
+        )
+        const [settings] = useState(task?.settings ?? {})
         settings.type = type
         return (
-            <Settings settings={settings} refresh={refresh} commit={commitTask}>
-                <ScrollingPage
-                    footer={
-                        <Box mt="s" mb="s" pl="l" pr="l">
-                            <Button onClick={commitTask} mode="contained">
-                                Add Task
-                            </Button>
-                        </Box>
-                    }>
-                    <IconInput value={icon} onChange={setIcon} />
-                    <TextInputAdorned
-                        label="Task"
-                        value={name}
-                        onChangeText={setName}
-                    />
+            <dirty.Provider>
+                <Settings
+                    settings={settings}
+                    refresh={refresh}
+                    commit={commitTask}>
+                    <ScrollingPage
+                        footer={
+                            <Box mt="s" mb="s" pl="l" pr="l">
+                                <Button onClick={commitTask} mode="contained">
+                                    Add Task
+                                </Button>
+                            </Box>
+                        }>
+                        <IconInput value={icon} onChange={setIcon} />
+                        <TextInputAdorned
+                            label="Task"
+                            value={name}
+                            onChangeText={setName}
+                        />
 
-                    <CategoryInput value={category} onChange={setCategory} />
-                    <TaskType value={type} onChange={setType} />
-                    <Switch value={type}>
-                        <Case
-                            when="todo"
-                            then={
-                                <TodoEditor
-                                    refresh={refresh}
-                                    settings={settings}
-                                />
-                            }
+                        <CategoryInput
+                            value={category}
+                            onChange={setCategory}
                         />
-                        <Case
-                            when="daily"
-                            then={
-                                <DailyEditor
-                                    refresh={refresh}
-                                    settings={settings}
-                                />
-                            }
+                        <TaskType value={type} onChange={setType} />
+                        <Switch value={type}>
+                            <Case
+                                when="todo"
+                                then={
+                                    <TodoEditor
+                                        refresh={refresh}
+                                        settings={settings}
+                                    />
+                                }
+                            />
+                            <Case
+                                when="daily"
+                                then={
+                                    <DailyEditor
+                                        refresh={refresh}
+                                        settings={settings}
+                                    />
+                                }
+                            />
+                            <Case
+                                when="weekly"
+                                then={
+                                    <WeeklyEditor
+                                        refresh={refresh}
+                                        settings={settings}
+                                    />
+                                }
+                            />
+                            <Case
+                                when="monthly"
+                                then={
+                                    <MonthlyEditor
+                                        refresh={refresh}
+                                        settings={settings}
+                                    />
+                                }
+                            />
+                        </Switch>
+                        <Reminders settings={settings} refresh={refresh} />
+                        <TimedTask settings={settings} />
+                        <TextInput
+                            multiline
+                            label="Your Motivation"
+                            value={motivation}
+                            onChangeText={setMotivation}
                         />
-                        <Case
-                            when="weekly"
-                            then={
-                                <WeeklyEditor
-                                    refresh={refresh}
-                                    settings={settings}
-                                />
-                            }
-                        />
-                        <Case
-                            when="monthly"
-                            then={
-                                <MonthlyEditor
-                                    refresh={refresh}
-                                    settings={settings}
-                                />
-                            }
-                        />
-                    </Switch>
-                    <Reminders settings={settings} refresh={refresh} />
-                </ScrollingPage>
-            </Settings>
+                    </ScrollingPage>
+                </Settings>
+            </dirty.Provider>
         )
 
         function commitTask() {}
     },
-    { options: { headerTitle: 'Configure' } },
+    {
+        options: ({ isNew = !removeTask, removeTask }) => ({
+            headerTitle: isNew ? 'Create Goal' : 'Edit Goal',
+        }),
+    },
 )
 
 addDebugger('Configure', () => {

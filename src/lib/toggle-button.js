@@ -62,10 +62,11 @@ export function ToggleButton({ children, icon, selected, ...props }) {
 
 const boxStyles = StyleSheet.create({
     box: {
-        borderColor: '#fff2',
+        borderColor: palette.all.app.inputBorder,
         borderWidth: 1,
         color: palette.all.app.color,
         alignItems: 'stretch',
+        justifyContent: 'space-around',
         flexDirection: 'row',
     },
     selected: {
@@ -114,11 +115,14 @@ export function ToggleBox({
                 selected && boxStyles.selected,
                 ...ensureArray(props.style),
             ]}>
-            <FullWidthByPercentPressable
-                flexDirection="column"
-                {...{ onPress, onPressIn, onPressOut }}>
-                {toRender}
-            </FullWidthByPercentPressable>
+            {!!onPress && (
+                <FullWidthByPercentPressable
+                    flexDirection="column"
+                    {...{ onPress, onPressIn, onPressOut }}>
+                    {toRender}
+                </FullWidthByPercentPressable>
+            )}
+            {!onPress && toRender}
         </Box>
     )
 }
@@ -137,9 +141,9 @@ export function ToggleGroup({ children, length, ...props }) {
                 child.props = {
                     ...child.props,
                     style: [
-                        ...ensureArray(child.props.style),
                         widthStyle,
                         styles.left,
+                        ...ensureArray(child.props.style),
                     ],
                 }
                 break
@@ -147,9 +151,9 @@ export function ToggleGroup({ children, length, ...props }) {
                 child.props = {
                     ...child.props,
                     style: [
-                        ...ensureArray(child.props.style),
                         widthStyle,
                         styles.right,
+                        ...ensureArray(child.props.style),
                     ],
                 }
                 break
@@ -157,9 +161,9 @@ export function ToggleGroup({ children, length, ...props }) {
                 child.props = {
                     ...child.props,
                     style: [
-                        ...ensureArray(child.props.style),
                         widthStyle,
                         styles.middle,
+                        ...ensureArray(child.props.style),
                     ],
                 }
                 break
