@@ -9,7 +9,7 @@ export const modeStyles = {
         borderColor: palette.all.app.darkColor,
     },
     standard: {
-        color: palette.all.app.mutedColor,
+        color: palette.all.app.accent,
         borderColor: palette.all.app.mutedColor,
     },
 }

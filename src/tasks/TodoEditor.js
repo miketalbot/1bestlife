@@ -3,7 +3,7 @@ import { theme } from '../lib/paper-theme'
 import { palette } from '../config/palette'
 import Sugar from 'sugar'
 import React from 'react'
-import { ToggleBox, ToggleGroup } from '../lib/toggle-button'
+import { SelectedBox, ToggleBox, ToggleGroup } from '../lib/toggle-button'
 import { Box, Text } from '../components/Theme'
 import { Icon } from '../lib/icons'
 import { DateEditor } from '../lib/DateEditor'
@@ -22,7 +22,7 @@ const todoStyles = StyleSheet.create({
         borderColor: palette.all.app.darkColor,
     },
     standard: {
-        color: palette.all.app.mutedColor,
+        color: palette.all.app.accent,
         borderColor: palette.all.app.mutedColor,
     },
 })
@@ -45,6 +45,8 @@ export function TodoEditor({
     settings.mode = mode
     const asapStyles =
         mode === 'asap' ? todoStyles.selected : todoStyles.standard
+    const onedayStyles =
+        mode === 'oneday' ? todoStyles.selected : todoStyles.standard
     const byStyles = mode === 'by' ? todoStyles.selected : todoStyles.standard
     let by = Sugar.String.titleize(settings.dateMode || 'by')
     if (by === 'By') {
@@ -53,20 +55,34 @@ export function TodoEditor({
     return (
         <Box width="100%">
             <ToggleGroup mb="s">
-                <ToggleBox
-                    height={100}
-                    selected={mode === 'asap'}
-                    onPress={() => setMode('asap')}>
-                    <Box
+                <ToggleBox height={100} style={{ flexDirection: 'column' }}>
+                    <SelectedBox
                         width="100%"
+                        borderBottomColor={'inputBorder'}
+                        onPress={() => setMode('asap')}
+                        borderBottomWidth={1}
+                        borderRightWidth={0}
+                        borderTopLeftRadius={'s'}
                         flexGrow={1}
+                        selected={mode === 'asap'}
                         alignItems="center"
                         justifyContent="space-around">
                         <Text style={asapStyles}>Soon</Text>
-                    </Box>
+                    </SelectedBox>
+                    <SelectedBox
+                        width="100%"
+                        flexGrow={1}
+                        onPress={() => setMode('oneday')}
+                        borderBottomLeftRadius={'s'}
+                        selected={mode === 'oneday'}
+                        alignItems="center"
+                        justifyContent="space-around">
+                        <Text style={onedayStyles}>One Day</Text>
+                    </SelectedBox>
                 </ToggleBox>
                 <ToggleBox
                     p="s"
+                    borderLeftWidth={0}
                     height={100}
                     flexDirection="column"
                     justifyContent="space-around"

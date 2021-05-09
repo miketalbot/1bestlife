@@ -15,11 +15,13 @@ export const aspectRatio = width / 375
 
 const theme = {
     colors: {
+        ...palette.all.app,
         primary: palette.all.app.accent,
         primaryLight: Color(palette.all.app.accent).lighten(0.3).hex(),
         secondary: palette.all.app.accent,
         danger: '#FF0058',
         info: '#808080',
+        inputBorder: palette.all.app.inputBorder,
         edit: Color(palette.all.app.accent).darken(0.2).hex(),
         text: palette.all.app.color,
         textContrast: palette.all.app.darkColor,
@@ -36,6 +38,7 @@ const theme = {
         input: 12,
     },
     borderRadii: {
+        xs: 2,
         s: 4,
         m: 10,
         l: 25,

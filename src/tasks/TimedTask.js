@@ -1,12 +1,12 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 import { palette } from '../config/palette'
 import { useDirty } from '../lib/dirty'
 import React, { useRef } from 'react'
 import { CustomTextInput } from '../lib/CustomTextInput'
-import { Box, ListItemBox } from '../components/Theme'
+import { Box, ListItemBox, Text } from '../components/Theme'
 import { ToggleBox, ToggleGroup } from '../lib/toggle-button'
 import { Icon, IconButton } from '../lib/icons'
-import { Input } from '../lib/text-input'
+import { DurationScreen } from '../lib/DurationPicker'
 
 const timerStyles = StyleSheet.create({
     input: {
@@ -115,17 +115,69 @@ export function TimedTask({ settings }) {
                                 />
                             </Box>
                             <Box flex={0.1} />
-                            <Input
-                                keyboardType={'numeric'}
-                                editable={!!settings.timed}
-                                style={[
-                                    timerStyles.input,
-                                    !settings.timed && timerStyles.disabled,
-                                ]}
-                                value={editTime}
-                                onChangeText={setEditTime}
-                                onBlur={updateTime}
-                            />
+                            <TouchableOpacity
+                                disabled={!settings.timed}
+                                onPress={edit}>
+                                <Box flexDirection="row" alignItems="center">
+                                    {Math.floor(time / 3600000) > 0 && (
+                                        <>
+                                            <Box>
+                                                <Text
+                                                    style={[
+                                                        timerStyles.input,
+                                                        !settings.timed &&
+                                                            timerStyles.disabled,
+                                                    ]}>
+                                                    {Math.floor(time / 3600000)}
+                                                </Text>
+                                            </Box>
+                                            <Box mt="s">
+                                                <Text variant="label">h</Text>
+                                            </Box>
+                                        </>
+                                    )}
+                                    <Box ml="xs">
+                                        <Text
+                                            style={[
+                                                timerStyles.input,
+                                                !settings.timed &&
+                                                    timerStyles.disabled,
+                                            ]}>
+                                            {Math.floor(time / 60000) % 60}
+                                        </Text>
+                                    </Box>
+                                    <Box mt="s">
+                                        <Text variant="label">m</Text>
+                                    </Box>
+                                    <Box ml="xs">
+                                        <Text
+                                            style={[
+                                                timerStyles.input,
+                                                !settings.timed &&
+                                                    timerStyles.disabled,
+                                            ]}>
+                                            {`00${
+                                                Math.floor(time / 1000) % 60
+                                            }`.slice(-2)}
+                                        </Text>
+                                    </Box>
+                                    <Box mt="s">
+                                        <Text variant="label">s</Text>
+                                    </Box>
+
+                                    <Box ml="xs">
+                                        <Icon
+                                            color={
+                                                settings.timed
+                                                    ? palette.all.app.accent
+                                                    : palette.all.app.mutedColor
+                                            }
+                                            icon="chevron-right"
+                                            size={12}
+                                        />
+                                    </Box>
+                                </Box>
+                            </TouchableOpacity>
                             <Box flex={0.1} />
                             <Box>
                                 <IconButton
@@ -147,6 +199,16 @@ export function TimedTask({ settings }) {
             </CustomTextInput>
         </>
     )
+
+    function edit() {
+        DurationScreen.navigate({
+            value: time,
+            onChange: time => {
+                setTime(time)
+                setEditTime(makeTime(time))
+            },
+        })
+    }
 
     function updateTime() {
         let currentTime = processTime(editTime)
@@ -191,7 +253,7 @@ export function TimedTask({ settings }) {
 
     function makeTime(value) {
         value = value / 1000
-        return `${Math.floor(value / 60)}.${`00${value % 60}`.slice(-2)}`
+        return `${Math.floor(value / 60)}m ${`00${value % 60}`.slice(-2)}s`
     }
 
     function processTime(v = '') {

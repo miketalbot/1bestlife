@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { StyleSheet, Text } from 'react-native'
+import React, { useMemo, useState } from 'react'
+import { StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
 import { theme } from './paper-theme'
 import { ensureArray } from './ensure-array'
 import { Box } from '../components/Theme'
@@ -7,6 +7,7 @@ import { Button } from 'react-native-paper'
 import { palette } from '../config/palette'
 import { Icon } from './icons'
 import { FullWidthByPercentPressable } from './FullWidthPressable'
+import Pressable from 'react-native/Libraries/Components/Pressable/Pressable'
 
 const styles = StyleSheet.create({
     left: {
@@ -14,12 +15,14 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: theme.roundness,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
+        overflow: 'hidden',
     },
     right: {
         borderTopRightRadius: theme.roundness,
         borderBottomRightRadius: theme.roundness,
         borderTopLeftRadius: 0,
         borderBottomLeftRadius: 0,
+        overflow: 'hidden',
     },
     middle: {
         borderTopLeftRadius: 0,
@@ -68,10 +71,17 @@ const boxStyles = StyleSheet.create({
         alignItems: 'stretch',
         justifyContent: 'space-around',
         flexDirection: 'row',
+        overflow: 'hidden',
+    },
+    toggleGroup: {
+        overflow: 'hidden',
+    },
+    pressed: {
+        backgroundColor: `${palette.all.app.accent}30`,
+        opacity: 1,
     },
     selected: {
         borderColor: palette.all.app.backgroundColor,
-        borderWidth: 1,
         backgroundColor: palette.all.app.accent,
         color: palette.all.app.darkColor,
     },
@@ -88,6 +98,7 @@ const boxStyles = StyleSheet.create({
         flexGrow: 1,
         alignSelf: 'stretch',
     },
+    selectedBox: {},
 })
 
 export function ToggleBox({
@@ -107,16 +118,22 @@ export function ToggleBox({
             ],
         },
     }))
+    const [pressed, setPressed] = useState(false)
+    onPressIn = onPressIn || whenPressed
+    onPressOut = onPressOut || whenUnpressed
+
     return (
         <Box
             {...props}
             style={[
                 boxStyles.box,
                 selected && boxStyles.selected,
+                pressed && boxStyles.pressed,
                 ...ensureArray(props.style),
             ]}>
             {!!onPress && (
                 <FullWidthByPercentPressable
+                    Component={TouchableWithoutFeedback}
                     flexDirection="column"
                     {...{ onPress, onPressIn, onPressOut }}>
                     {toRender}
@@ -125,6 +142,58 @@ export function ToggleBox({
             {!onPress && toRender}
         </Box>
     )
+
+    function whenPressed() {
+        setPressed(true)
+    }
+
+    function whenUnpressed() {
+        setPressed(false)
+    }
+}
+
+export function SelectedBox({
+    children,
+    onPress,
+    onPressIn,
+    onPressOut,
+    selected,
+    ...props
+}) {
+    const [pressed, setPressed] = useState(false)
+    onPressIn = onPressIn || whenPressed
+    onPressOut = onPressOut || whenUnpressed
+    const toRender = React.Children.toArray(children).map(child => ({
+        ...child,
+        props: {
+            ...child.props,
+            styles: [
+                selected ? boxStyles.selectedText : boxStyles.standardText,
+            ],
+        },
+    }))
+    return (
+        <Pressable flexGrow={1} {...{ onPress, onPressIn, onPressOut }}>
+            <Box
+                {...props}
+                style={[
+                    boxStyles.selectedBox,
+                    selected && boxStyles.selected,
+                    pressed && boxStyles.pressed,
+                    ...ensureArray(props.style),
+                ]}>
+                {toRender}
+            </Box>
+        </Pressable>
+    )
+
+    function whenPressed() {
+        setPressed(true)
+    }
+
+    function whenUnpressed() {
+        setPressed(false)
+    }
 }
 
 export function ToggleGroup({ children, length, ...props }) {
@@ -170,7 +239,12 @@ export function ToggleGroup({ children, length, ...props }) {
         }
     }
     return (
-        <Box {...props} flexDirection="row" width="100%" alignItems="stretch">
+        <Box
+            {...props}
+            style={[props.style, boxStyles.toggleGroup]}
+            flexDirection="row"
+            width="100%"
+            alignItems="stretch">
             {modified.map(child => {
                 return child
             })}
