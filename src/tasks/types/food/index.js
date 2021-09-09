@@ -8,7 +8,6 @@ registerTask({
     group: 'food',
     icon: 'apple-alt',
     title: 'Eat more fruit',
-    dayTimes: 3,
     recommended: {
         dayTimes: 3,
         type: 'daily',

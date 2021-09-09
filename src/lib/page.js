@@ -65,6 +65,7 @@ export function Page({
     footer,
     style: baseStyle,
     settings,
+    clickThru,
     refresh,
     commit,
     ...props
@@ -120,9 +121,7 @@ export function Page({
                         </View>
                         {height !== 0 && (
                             <View pointerEvents="auto">
-                                <ListItemBox
-                                    onPress={dismiss}
-                                    style={styles.close}>
+                                <ListItemBox style={styles.close}>
                                     <Box flex={1} />
                                     <Button onPress={dismiss}>Done</Button>
                                 </ListItemBox>

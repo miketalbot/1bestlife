@@ -34,9 +34,9 @@ export function NewTask({
         <View key="goal" style={[StyleSheet.absoluteFill, styles.goalPage]}>
             <View style={styles.contents}>
                 <TextInputDebounced
-                    label="Task"
+                    label="To Do"
                     value={name}
-                    autoFocus
+                    autoFocus={type === 'todo'}
                     onChangeText={setName}
                     right={
                         <Box flexDirection="row">

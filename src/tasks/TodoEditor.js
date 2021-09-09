@@ -98,7 +98,7 @@ export function TodoEditor({
                         label={mode === 'by' ? 'Date' : 'Deadline'}
                         value="x">
                         <Box pb="s" width="100%">
-                            <ToggleGroup mb="s" mt="s" pr="s">
+                            <ToggleGroup mb="s" mt="s" pr="m">
                                 <ToggleBox
                                     selected={hasADeadline}
                                     p="s"

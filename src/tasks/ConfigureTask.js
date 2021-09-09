@@ -77,7 +77,7 @@ export const ConfigureTask = addScreen(
                         }>
                         <IconInput value={icon} onChange={setIcon} />
                         <TextInputAdorned
-                            label="Task"
+                            label="To do"
                             value={name}
                             onChangeText={setName}
                         />
