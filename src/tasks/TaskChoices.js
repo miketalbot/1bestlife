@@ -94,7 +94,9 @@ export function TaskChoices({
                                         text: taskDef.title,
                                         icon: taskDef.icon,
                                         typeId: name,
-                                        recommended: taskDef.recommended,
+                                        recommended: JSON.parse(
+                                            JSON.stringify(taskDef.recommended),
+                                        ),
                                     })
                                 }>
                                 <Box

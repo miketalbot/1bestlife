@@ -12,6 +12,7 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated'
 import { mix } from 'react-native-redash'
+import { customIcons } from '../custom-icons'
 
 function addIcons(scanIcons) {
     const iconList = Object.keys(scanIcons)
@@ -31,9 +32,22 @@ export const icons = Object.keys(LightIcons)
     })
 
 export function Icon({ icon, light = true, name, ...props }) {
+    icon = icon || name
+    if (icon?.startsWith('flat:')) {
+        const Icon = customIcons[icon]
+        const size = `${props.size || 25}px`
+        return (
+            <Icon
+                {...props}
+                width={size}
+                height={size}
+                fill={props.color || 'white'}
+            />
+        )
+    }
     return (
         <FontAwesomeIcon
-            icon={[light ? 'fal' : 'fas', icon || name]}
+            icon={[light ? 'fal' : 'fas', icon]}
             size={25}
             {...props}
         />

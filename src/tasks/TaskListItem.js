@@ -67,19 +67,7 @@ export function TaskListItem({ task }) {
                 paddingBottom: 4,
             },
             taskListItemStyles.selected,
-            {
-                shadowColor: `${taskDef.color}A0`,
-                shadowOpacity: 0.8,
-                shadowRadius: 35,
-            },
         ]
-    }, [taskDef.color])
-    const shadowStyle = useMemo(() => {
-        return {
-            shadowColor: `${taskDef.color}C0`,
-            shadowOpacity: 1,
-            shadowRadius: 13,
-        }
     }, [taskDef.color])
     const [userExpanded, setExpanded] = useState(task.expanded)
     const [touched, setTouched] = useState(false)
