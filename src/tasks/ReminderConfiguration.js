@@ -1,7 +1,6 @@
 import { addScreen } from '../lib/screens'
 import { ScrollingPage } from '../lib/page'
 import React, { useEffect, useState } from 'react'
-import { addDebugger } from '../lib/DebuggerView'
 import { Box, Text } from '../components/Theme'
 import { Button } from 'react-native-paper'
 import { Checkbox } from '../lib/Checkbox'
@@ -14,6 +13,7 @@ import { InputChevron } from '../lib/InputChevron'
 
 export const ReminderConfiguration = addScreen(
     function ReminderConfiguration({
+        navigation,
         route: {
             params: { settings, refresh: parentRefresh },
         },
@@ -33,7 +33,18 @@ export const ReminderConfiguration = addScreen(
             parentRefresh()
         }, [JSON.stringify([settings.reminders, settings.standard])])
         return (
-            <ScrollingPage settings={settings} refresh={refresh}>
+            <ScrollingPage
+                footer={
+                    <Box mt="s" mb="s" pl="l" pr="l">
+                        <Button
+                            onPress={() => navigation.goBack()}
+                            mode="contained">
+                            Done
+                        </Button>
+                    </Box>
+                }
+                settings={settings}
+                refresh={refresh}>
                 <Checkbox
                     text="All standard reminders"
                     value={standard}
@@ -113,15 +124,15 @@ export const ReminderConfiguration = addScreen(
     },
 )
 
-addDebugger('Reminders 1', () => {
-    ReminderConfiguration.navigate({
-        settings: { type: 'todo', dateMode: 'by' },
-        refresh: () => {},
-    })
-})
-addDebugger('Reminders 2', () => {
-    ReminderConfiguration.navigate({
-        settings: { type: 'todo', dateMode: 'at' },
-        refresh: () => {},
-    })
-})
+// addDebugger('Reminders 1', () => {
+//     ReminderConfiguration.navigate({
+//         settings: { type: 'todo', dateMode: 'by' },
+//         refresh: () => {},
+//     })
+// })
+// addDebugger('Reminders 2', () => {
+//     ReminderConfiguration.navigate({
+//         settings: { type: 'todo', dateMode: 'at' },
+//         refresh: () => {},
+//     })
+// })

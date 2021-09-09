@@ -67,6 +67,7 @@ export function NewTask({
                     onChange={setCategory}
                 />
                 <TaskChoices
+                    onPress={makeTaskFrom}
                     onTasks={defer(setTasks)}
                     category={category}
                     search={name}
@@ -74,6 +75,17 @@ export function NewTask({
             </View>
         </View>
     )
+
+    function makeTaskFrom(template) {
+        ConfigureTask.navigate({
+            type,
+            text: template.text,
+            icon: template.icon,
+            typeId: template.typeId,
+            category: template.category,
+            settings: template.recommended,
+        })
+    }
 
     function makeTask() {
         ConfigureTask.navigate({ type, text: name, typeId: 'custom', category })

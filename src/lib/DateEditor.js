@@ -21,13 +21,20 @@ export const DateEditor = addScreen(
         const dirty = useDirty()
         dirty.useAlert(configure)
         const [date, setDate] = dirty.useState(settings.byWhen || new Date())
-        const [dateMode, setMode] = dirty.useState(settings.dateMode || 'by')
+        const [dateMode, setMode] = dirty.useState(
+            settings.mode === 'by'
+                ? 'at'
+                : settings.dateMode === 'at'
+                ? 'before'
+                : settings.dateMode || 'by',
+        )
         const items = useModes(
-            {
-                by: mode('By', update),
-                before: mode('Before', update),
-                at: mode('At', update),
-            },
+            settings.mode === 'by'
+                ? { at: mode('At', update) }
+                : {
+                      by: mode('By', update),
+                      before: mode('Before', update),
+                  },
             dateMode,
         )
         return (
@@ -40,6 +47,11 @@ export const DateEditor = addScreen(
                     </Box>
                 }>
                 <Box p="s">{items}</Box>
+                <Box p="s" alignItems="center">
+                    <Text variant="label">
+                        Today is {Sugar.Date.format(new Date(), '{medium}')}
+                    </Text>
+                </Box>
                 <Box p="s">
                     <RNDateTimePicker
                         minimumDate={Sugar.Date.beginningOfDay(
@@ -67,6 +79,14 @@ export const DateEditor = addScreen(
                         />
                     </Box>
                 </If>
+                <Box p="s" alignItems="center">
+                    <Text variant="label">
+                        Around{' '}
+                        {Sugar.Date.relative(
+                            Sugar.Date.create(date).endOfDay(),
+                        )}
+                    </Text>
+                </Box>
             </Page>
         )
 

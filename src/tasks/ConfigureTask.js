@@ -3,7 +3,6 @@ import { addScreen } from 'lib/screens'
 import { StyleSheet } from 'react-native'
 import { palette } from 'config/palette'
 import { TextInputAdorned } from 'lib/text-input'
-import { addDebugger } from 'lib/DebuggerView'
 import { TaskType } from './TaskType'
 import { CategoryInput } from './CategoryInput'
 import { Case, Switch } from 'lib/switch'
@@ -38,29 +37,30 @@ export const ConfigureTask = addScreen(
                 text,
                 isNew = !removeTask,
                 typeId,
-                task,
                 addTask,
                 removeTask,
                 type: initialType,
                 category: initialCategory,
+                task,
+                icon: initialIcon,
+                settings: initialSettings = {},
             },
         },
     }) {
-        task = task || {}
+        task = task || { settings: initialSettings, icon: initialIcon }
+        console.log(task)
         const refresh = useRefresh()
         const dirty = useDirty()
         dirty.useAlert(commitTask)
         const [category, setCategory] = useState(
             task?.category ?? initialCategory,
         )
-        const [type, setType] = dirty.useState(task?.type ?? initialType)
         const [name, setName] = dirty.useState(task?.text ?? text)
         const [icon, setIcon] = dirty.useState(task?.icon ?? 'star')
         const [motivation, setMotivation] = dirty.useState(
             task?.motivation ?? '',
         )
         const [settings] = useState(task?.settings ?? {})
-        settings.type = type
         return (
             <dirty.Provider>
                 <Settings
@@ -86,8 +86,14 @@ export const ConfigureTask = addScreen(
                             value={category}
                             onChange={setCategory}
                         />
-                        <TaskType value={type} onChange={setType} />
-                        <Switch value={type}>
+                        <TaskType
+                            value={settings.type}
+                            onChange={v => {
+                                settings.type = v
+                                refresh()
+                            }}
+                        />
+                        <Switch value={settings.type}>
                             <Case
                                 when="todo"
                                 then={
@@ -125,14 +131,18 @@ export const ConfigureTask = addScreen(
                                 }
                             />
                         </Switch>
-                        <Reminders settings={settings} refresh={refresh} />
-                        <TimedTask settings={settings} />
-                        <TextInput
-                            multiline
-                            label="Your Motivation"
-                            value={motivation}
-                            onChangeText={setMotivation}
-                        />
+                        {settings.type && (
+                            <Reminders settings={settings} refresh={refresh} />
+                        )}
+                        {settings.type && <TimedTask settings={settings} />}
+                        {settings.type && (
+                            <TextInput
+                                multiline
+                                label="Your Motivation"
+                                value={motivation}
+                                onChangeText={setMotivation}
+                            />
+                        )}
                     </ScrollingPage>
                 </Settings>
             </dirty.Provider>
@@ -147,11 +157,11 @@ export const ConfigureTask = addScreen(
     },
 )
 
-addDebugger('Configure', () => {
-    ConfigureTask.navigate({
-        type: 'todo',
-        text: 'Example Task',
-        typeId: 'custom',
-        category: 'food',
-    })
-})
+// addDebugger('Configure', () => {
+//     ConfigureTask.navigate({
+//         type: 'todo',
+//         text: 'Example Task',
+//         typeId: 'custom',
+//         category: 'food',
+//     })
+// })

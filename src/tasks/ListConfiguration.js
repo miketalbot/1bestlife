@@ -1,7 +1,6 @@
 import { addScreen } from '../lib/screens'
 import { ScrollingPage } from '../lib/page'
 import React, { useEffect } from 'react'
-import { addDebugger } from '../lib/DebuggerView'
 import { Box, Text } from '../components/Theme'
 import { Button } from 'react-native-paper'
 import { Icon } from '../lib/icons'
@@ -17,6 +16,7 @@ import { TouchableWithoutFeedback } from 'react-native'
 
 export const ListConfiguration = addScreen(
     function ListConfiguration({
+        navigation,
         route: {
             params: {
                 due,
@@ -39,7 +39,18 @@ export const ListConfiguration = addScreen(
 
         const lists = user[group] || []
         return (
-            <ScrollingPage settings={settings} refresh={refresh}>
+            <ScrollingPage
+                footer={
+                    <Box mt="s" mb="s" pl="l" pr="l">
+                        <Button
+                            onPress={() => navigation.goBack()}
+                            mode="contained">
+                            Done
+                        </Button>
+                    </Box>
+                }
+                settings={settings}
+                refresh={refresh}>
                 <Box mt="m">
                     <Text variant="label">{label}</Text>
                 </Box>
@@ -143,10 +154,10 @@ export const ListConfiguration = addScreen(
         options: { headerTitle: 'Lists' },
     },
 )
-
-addDebugger('Lists', () => {
-    ListConfiguration.navigate({
-        settings: { type: 'todo', dateMode: 'by' },
-        refresh: () => {},
-    })
-})
+//
+// addDebugger('Lists', () => {
+//     ListConfiguration.navigate({
+//         settings: { type: 'todo', dateMode: 'by' },
+//         refresh: () => {},
+//     })
+// })

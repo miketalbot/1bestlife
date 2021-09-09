@@ -45,7 +45,7 @@ export function User({ children }) {
         }
 
         function updateUser(userData) {
-            if (!userData.exists) {
+            if (!userData?.exists) {
                 userData = { created: Date.now() }
                 return firestore()
                     .collection('Users')

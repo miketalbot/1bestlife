@@ -5,8 +5,13 @@ import { range } from './range'
 import React, { useEffect, useState } from 'react'
 import { addScreen } from './screens'
 import { Page } from './page'
+import { Button } from 'react-native-paper'
 
-export function DurationPicker({ value: initialValue, onChange = () => {} }) {
+export function DurationPicker({
+    value: initialValue,
+    onChange = () => {},
+    ...props
+}) {
     const value = initialValue / 1000
     const [hours, setHours] = useState(Math.floor(value / 3600))
     const [minutes, setMinutes] = useState(Math.floor(value / 60) % 60)
@@ -22,7 +27,7 @@ export function DurationPicker({ value: initialValue, onChange = () => {} }) {
     }, [time, value])
 
     return (
-        <Page>
+        <Page {...props}>
             <Box flexDirection="row" alignItems="center" pt="l">
                 <Box width="33.3%">
                     <Box alignItems="center">
@@ -88,11 +93,26 @@ export function DurationPicker({ value: initialValue, onChange = () => {} }) {
 
 export const DurationScreen = addScreen(
     function Duration({
+        navigation,
         route: {
             params: { value, onChange },
         },
     }) {
-        return <DurationPicker value={value} onChange={onChange} />
+        return (
+            <DurationPicker
+                value={value}
+                onChange={onChange}
+                footer={
+                    <Box mt="s" mb="s" pl="l" pr="l">
+                        <Button
+                            onPress={() => navigation.goBack()}
+                            mode="contained">
+                            Done
+                        </Button>
+                    </Box>
+                }
+            />
+        )
     },
     { options: { headerTitle: 'Duration' } },
 )

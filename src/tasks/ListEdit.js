@@ -108,7 +108,7 @@ export const ListEdit = addScreen(
 
         function setList() {
             dirty.clean()
-            list.name = name
+            list.name = name.trim()
             list.icon = icon
             list.settings = settings
             list.motivation = motivation

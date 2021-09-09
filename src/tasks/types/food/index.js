@@ -8,8 +8,10 @@ registerTask({
     group: 'food',
     icon: 'apple-alt',
     title: 'Eat more fruit',
+    dayTimes: 3,
     recommended: {
-        count: 3,
+        dayTimes: 3,
+        type: 'daily',
     },
     keywords: 'health five a day',
     type: props => <DoneTask {...props} />,
@@ -22,7 +24,8 @@ registerTask({
     icon: 'carrot',
     title: 'Eat more vegetables',
     recommended: {
-        count: 3,
+        dayTimes: 3,
+        type: 'daily',
     },
     keywords: 'health five a day',
     type: props => <DoneTask {...props} />,
@@ -34,6 +37,10 @@ registerTask({
     group: 'food',
     icon: 'egg-fried',
     title: 'Eat breakfast',
+    recommended: {
+        dayTimes: 1,
+        type: 'daily',
+    },
     keywords: 'meal',
     type: props => <DoneTask {...props} />,
 })
@@ -43,6 +50,10 @@ registerTask({
     searchable: true,
     group: 'food',
     icon: 'sandwich',
+    recommended: {
+        dayTimes: 1,
+        type: 'daily',
+    },
     title: 'Eat lunch',
     keywords: 'meal',
     type: props => <DoneTask {...props} />,
@@ -53,6 +64,10 @@ registerTask({
     searchable: true,
     group: 'food',
     icon: 'utensils',
+    recommended: {
+        dayTimes: 1,
+        type: 'daily',
+    },
     title: 'Eat dinner',
     keywords: 'meal',
     type: props => <DoneTask {...props} />,

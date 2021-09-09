@@ -44,17 +44,21 @@ export function ToggleButton({ children, icon, selected, ...props }) {
         <Button
             {...props}
             style={[...(props.style || []), selected && styles.selected]}>
-            <Box alignItems="center">
-                <Box mt="s" mb={'s'}>
-                    <Icon
-                        color={
-                            selected
-                                ? palette.all.app.darkColor
-                                : palette.all.app.accent
-                        }
-                        icon={icon}
-                    />
-                </Box>
+            <Box alignItems="center" justifyContent="center">
+                {icon ? (
+                    <Box mt="s" mb={'s'}>
+                        <Icon
+                            color={
+                                selected
+                                    ? palette.all.app.darkColor
+                                    : palette.all.app.accent
+                            }
+                            icon={icon}
+                        />
+                    </Box>
+                ) : (
+                    <Box mt="s" />
+                )}
                 <Text style={[selected ? styles.selected : styles.unselected]}>
                     {children}
                 </Text>

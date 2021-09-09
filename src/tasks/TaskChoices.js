@@ -6,6 +6,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View,
 } from 'react-native'
 import { Mounted } from '../lib/Mounted'
@@ -14,6 +15,7 @@ import { ColorBar } from '../lib/ColorBar'
 import { SelectableLine } from '../SelectableLine'
 import { taskListItemStyles } from './TaskListItem'
 import { Icon } from '../lib/icons'
+import noop from '../lib/noop'
 
 function scoreTask(search, definition) {
     if (!search.trim()) {
@@ -37,7 +39,12 @@ const styles = StyleSheet.create({
     },
 })
 
-export function TaskChoices({ search = '', category, onTasks = () => {} }) {
+export function TaskChoices({
+    search = '',
+    category,
+    onPress = noop,
+    onTasks = () => {},
+}) {
     search = search.toLowerCase()
     const list = useMemo(() => {
         let result = Object.entries(getAllTasks())
@@ -79,50 +86,66 @@ export function TaskChoices({ search = '', category, onTasks = () => {} }) {
                 <Mounted springConfig={{ mass: 0.38 }}>
                     {list.map(([name, taskDef], i) => {
                         return (
-                            <Box
+                            <TouchableOpacity
                                 key={`${name}${i}`}
-                                mb="xs"
-                                flexDirection="row"
-                                alignItems="center">
-                                <ColorBar color={taskDef.color || '#444'} />
-                                <SelectableLine color={taskDef.color}>
-                                    <Box
-                                        flexDirection="row"
-                                        alignItems="center"
-                                        width="100%"
-                                        height={60}>
-                                        <View style={[taskListItemStyles.icon]}>
-                                            {taskDef.icon ? (
-                                                <Icon
-                                                    color="white"
-                                                    icon={taskDef.icon}
-                                                />
-                                            ) : null}
-                                        </View>
-                                        <View>
-                                            <Text
+                                onPress={() =>
+                                    onPress({
+                                        category: taskDef.group,
+                                        text: taskDef.title,
+                                        icon: taskDef.icon,
+                                        typeId: name,
+                                        recommended: taskDef.recommended,
+                                    })
+                                }>
+                                <Box
+                                    mb="xs"
+                                    flexDirection="row"
+                                    alignItems="center">
+                                    <ColorBar color={taskDef.color || '#444'} />
+                                    <SelectableLine color={taskDef.color}>
+                                        <Box
+                                            flexDirection="row"
+                                            alignItems="center"
+                                            width="100%"
+                                            height={60}>
+                                            <View
                                                 style={[
-                                                    styles.text,
-                                                    taskListItemStyles.taskItemTitle,
+                                                    taskListItemStyles.icon,
                                                 ]}>
-                                                {taskDef.title}
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={taskListItemStyles.spacer}
-                                        />
-                                        <View
-                                            style={[
-                                                taskListItemStyles.expander,
-                                            ]}>
-                                            <Icon
-                                                icon="chevron-right"
-                                                color="#fff"
+                                                {taskDef.icon ? (
+                                                    <Icon
+                                                        color="white"
+                                                        icon={taskDef.icon}
+                                                    />
+                                                ) : null}
+                                            </View>
+                                            <View>
+                                                <Text
+                                                    style={[
+                                                        styles.text,
+                                                        taskListItemStyles.taskItemTitle,
+                                                    ]}>
+                                                    {taskDef.title}
+                                                </Text>
+                                            </View>
+                                            <View
+                                                style={
+                                                    taskListItemStyles.spacer
+                                                }
                                             />
-                                        </View>
-                                    </Box>
-                                </SelectableLine>
-                            </Box>
+                                            <View
+                                                style={[
+                                                    taskListItemStyles.expander,
+                                                ]}>
+                                                <Icon
+                                                    icon="chevron-right"
+                                                    color="#fff"
+                                                />
+                                            </View>
+                                        </Box>
+                                    </SelectableLine>
+                                </Box>
+                            </TouchableOpacity>
                         )
                     })}
                 </Mounted>

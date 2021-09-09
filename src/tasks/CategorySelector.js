@@ -20,9 +20,6 @@ export function CategorySelector({
             )
             setCurrentCategory(updatedCategory)
             onChange(updatedCategory)
-        } else if (!has(category)) {
-            setCurrentCategory('')
-            onChange('')
         }
     }, [category, mustSelect, onChange, has])
     return (
@@ -62,9 +59,6 @@ export function CategorySelector({
                 )
 
                 function setCategory() {
-                    if (!has(name)) {
-                        return
-                    }
                     setCurrentCategory(current => {
                         let result =
                             current === name ? (mustSelect ? name : '') : name

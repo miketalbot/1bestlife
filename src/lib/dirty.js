@@ -104,6 +104,7 @@ export function useDirty(parent = () => {}) {
                 return function (...params) {
                     updateParent()
                     dirty.current = true
+                    console.log('::: make dirty')
                     return fn(...params)
                 }
             },

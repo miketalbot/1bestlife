@@ -41,7 +41,7 @@ export function ListEditor({
                                         <Text
                                             numberOfLines={1}
                                             variant="buttonCaption">
-                                            Add to "{lastList.name}"
+                                            Add to "{lastList.name.trim()}"
                                         </Text>
                                     </Box>
                                 </Button>
