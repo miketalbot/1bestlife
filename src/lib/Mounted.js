@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
-    withSpring,
     withTiming,
 } from 'react-native-reanimated'
 import { useRefresh } from './hooks'
 import { View } from 'react-native'
+import debounce from 'lodash-es/debounce'
+import { lerp } from './lerp'
 
 let id = 0
 
@@ -15,13 +16,32 @@ export function Mounted({ children, above, ...props }) {
     const existing = useRef(new Map())
     const counter = useRef(new Map())
     const mounting = useRef(new Map())
+    const registerForUnmount = useCallback(
+        debounce(() => {
+            let shouldRefresh = false
+            for (let item of toBeUnmounted.current.values()) {
+                if (unmounting.current.has(item)) {
+                    unmounting.current.delete(item)
+                    shouldRefresh = true
+                }
+            }
+            toBeUnmounted.current.clear()
+            if (shouldRefresh) refresh()
+        }, 605),
+        [],
+    )
     const unmounting = useRef(new Map())
-    const refresh = useRefresh()
+    const toBeUnmounted = useRef(new Set())
+    const refresh = useRefresh().debounce(50)
     const currentChildren = React.Children.toArray(children)
     let previous = new Set(existing.current.keys())
     for (let child of currentChildren) {
         previous.delete(child.key)
-        if (!existing.current.has(child.key)) {
+        if (
+            !existing.current.has(child.key) &&
+            !unmounting.current.has(child.key)
+        ) {
+            toBeUnmounted.current.delete(child)
             const count = (counter.current.get(child.key) || 0) + 1
             const key = `${child.key}${count}`
             counter.current.set(child.key, count)
@@ -36,40 +56,23 @@ export function Mounted({ children, above, ...props }) {
         }
         unmounting.current.set(item, existing.current.get(item))
         existing.current.delete(item)
-        setTimeout(() => {
-            if (unmounting.current.has(item)) {
-                unmounting.current.delete(item)
-                refresh()
-            }
-        }, 750)
+        toBeUnmounted.current.add(item)
+        registerForUnmount()
     }
 
     return (
         <View key={key}>
             {[
-                ...Array.from(mounting.current.values()).map(
-                    ({ child, key }) => (
-                        <Mountable
-                            above={above}
-                            {...props}
-                            key={key}
-                            isMounted={true}>
-                            {child}
-                        </Mountable>
-                    ),
-                ),
-                ...Array.from(unmounting.current.values()).map(
-                    ({ child, key }) => (
-                        <Mountable
-                            above={above}
-                            {...props}
-                            key={key}
-                            isMounted={false}>
-                            {child}
-                        </Mountable>
-                    ),
-                ),
-            ]}
+                ...Array.from(mounting.current.values()),
+                ...Array.from(unmounting.current.values()),
+            ].map(({ child, key }) => (
+                <Mountable
+                    above={above}
+                    {...props}
+                    isMounted={mounting.current.has(child.key)}>
+                    {child}
+                </Mountable>
+            ))}
         </View>
     )
 }
@@ -100,61 +103,46 @@ function BelowMountable({
     afterMounted = { translateX: 0, opacity: 0, translateY: 0 },
     beforeMounted = { translateX: 0, opacity: 0, translateY: 400 },
 }) {
-    const wasMounted = useRef(false)
-    const mounted = useSharedValue()
-    mounted.value = isMounted
-    const viewHeight = useSharedValue()
-    const maxHeight = useSharedValue(0)
-    const measuredHeight = useRef()
+    const viewHeight = useSharedValue(0)
+    const mounted = useSharedValue(0)
+    const wasMounted = useSharedValue(false)
+    const measure = useCallback(_measure, [isMounted])
+    const hasMounted = useRef(false)
+    const capturedHeight = useSharedValue(0)
+
     useEffect(() => {
         if (!isMounted) {
-            viewHeight.value = measuredHeight.current
-            setTimeout(() => {
-                viewHeight.value = withTiming(0)
-            }, 0)
-            wasMounted.current = false
-        } else {
-            maxHeight.value = 0
-            viewHeight.value = 500
-            setTimeout(() => {
-                maxHeight.value = withTiming(600)
-            }, 0)
+            wasMounted.value = wasMounted.value || hasMounted.current
         }
-    }, [isMounted, viewHeight, maxHeight])
-    const animatedStyles = useAnimatedStyle(() => {
-        const fromStyle = beforeMounted || afterMounted
-        let translateX
-        let translateY
-        let opacity
-        if (isMounted) {
-            if (!wasMounted.current) {
-                translateX = fromStyle.translateX
-                translateY = fromStyle.translateY
-                opacity = fromStyle.opacity
-                wasMounted.current = true
-            } else {
-                translateY = withSpring(0, springConfig)
-                translateX = withSpring(0, springConfig)
-                opacity = withTiming(1, timingConfig)
-            }
-        } else {
-            translateX = withSpring(afterMounted.translateX, springConfig)
-            translateY = withSpring(afterMounted.translateY, springConfig)
-            opacity = withTiming(afterMounted.opacity, timingConfig)
-        }
+        mounted.value = isMounted ? withTiming(1) : withTiming(0)
+        hasMounted.current = hasMounted.current || isMounted
+    }, [isMounted])
 
+    const animatedStyles = useAnimatedStyle(() => {
+        const translateX = lerp(
+            wasMounted.value
+                ? beforeMounted.translateX
+                : afterMounted.translateX,
+            0,
+            mounted.value,
+        )
+        const translateY = lerp(
+            wasMounted.value
+                ? beforeMounted.translateY
+                : afterMounted.translateY,
+            0,
+            mounted.value,
+        )
+        if (mounted.value > 0.9999) {
+            capturedHeight.value = viewHeight.value
+        }
         return {
-            transform: [
-                {
-                    translateX,
-                },
-                {
-                    translateY,
-                },
-            ],
-            opacity,
-            height: mounted.value ? undefined : viewHeight.value,
-            maxHeight: maxHeight.value,
+            transform: [{ translateX: translateX }, { translateY: translateY }],
+            opacity: mounted.value,
+            overflow: 'hidden',
+
+            maxHeight: lerp(0, 600, mounted.value),
+            // height: mounted.value ? undefined : viewHeight.value,
         }
     })
     return (
@@ -162,7 +150,7 @@ function BelowMountable({
             <View onLayout={measure}>{children || null}</View>
         </Animated.View>
     )
-    function measure(event) {
-        measuredHeight.current = event.nativeEvent.layout.height
+    function _measure(event) {
+        viewHeight.value = Math.floor(event.nativeEvent.layout.height)
     }
 }

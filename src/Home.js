@@ -18,6 +18,7 @@ import { DebuggerView } from 'lib/DebuggerView'
 const homeStyles = StyleSheet.create({
     home: {
         maxHeight: Dimensions.get('window').height,
+        // height: Dimensions.get('window').height,
         overflow: 'visible',
     },
     spacer: {
