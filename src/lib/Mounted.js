@@ -150,7 +150,7 @@ function BelowMountable({
         </Animated.View>
     )
     function setHeight({ value }) {
-        if (value > 0.999999) {
+        if (value > 0.999999 && storedHeight.current) {
             knownHeight.setValue(storedHeight.current)
         }
     }
