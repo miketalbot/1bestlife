@@ -27,7 +27,6 @@ export function InputTask({
     ...props
 }) {
     const [value, setValue] = React.useState(defaultValue)
-    console.log('Type', value)
     return (
         <View style={styles.input}>
             <View style={styles.textInput}>
@@ -50,7 +49,6 @@ export function InputTask({
 
     async function clicked() {
         user[field] = value
-        console.log(user[field], value, field)
         user.save()
         await user.completeTask(task)
     }

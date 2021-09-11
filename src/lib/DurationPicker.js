@@ -21,7 +21,6 @@ export function DurationPicker({
     const time = seconds + minutes * 60 + hours * 3600
     useEffect(() => {
         if (time !== value) {
-            console.log(time, hours, minutes, seconds)
             onChange(time * 1000)
         }
     }, [time, value])
@@ -72,7 +71,6 @@ export function DurationPicker({
                         itemStyle={{ color: palette.all.app.color }}
                         style={{ width: '100%', height: 180 }}
                         onValueChange={r => {
-                            console.log(r)
                             setSeconds(r)
                         }}
                         selectedValue={seconds}

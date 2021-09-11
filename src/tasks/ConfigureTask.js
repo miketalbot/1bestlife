@@ -48,7 +48,6 @@ export const ConfigureTask = addScreen(
         },
     }) {
         task = task || { settings: initialSettings, icon: initialIcon }
-        console.log(task)
         const refresh = useRefresh()
         const dirty = useDirty()
         dirty.useAlert(commitTask)

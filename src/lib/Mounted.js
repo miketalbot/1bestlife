@@ -156,7 +156,6 @@ function BelowMountable({
     }
     function _measure(event) {
         const height = event.nativeEvent.layout.height
-        console.log({ height })
         if (height > storedHeight.current) {
             storedHeight.current = height
         }

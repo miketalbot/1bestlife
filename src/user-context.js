@@ -93,7 +93,6 @@ export function useUser() {
                             return updated
                         }
                     })
-                    console.log('willSave')
                     result.save().catch(console.error)
                 }
             }
