@@ -31,10 +31,10 @@ export function completed({
 
 const styles = StyleSheet.create({
     notificationPanel: {
-        position: 'absolute',
-        top: 90,
-        left: 16,
-        right: 16,
+        marginTop: 90,
+        marginLeft: 16,
+        marginRight: 16,
+        marginBottom: 90,
         padding: 16,
         borderRadius: 8,
         backgroundColor: '#FFFFFFE0',

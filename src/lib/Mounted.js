@@ -93,9 +93,8 @@ function BelowMountable({
 }) {
     const mounted = useAnimatedValue(0)
     const knownHeight = useAnimatedValue(600)
-    const storedHeight = useRef(0)
+    const [storedHeight, setStoredHeight] = useState(0)
     const transition = useAnimatedValue(1)
-    const measure = useCallback(_measure, [isMounted])
 
     useEffect(() => {
         mounted.addListener(setHeight)
@@ -111,7 +110,7 @@ function BelowMountable({
             Animated.timing(mounted, {
                 toValue: isMounted ? 1 : 0,
                 duration: 400,
-                easing: Easing.out(Easing.elastic(0.8)),
+                easing: Easing.out(Easing.sin),
                 useNativeDriver: false,
             }).start()
         })
@@ -143,21 +142,21 @@ function BelowMountable({
             key={useKey}
             style={{
                 ...style,
-                overflow: isMounted ? 'visible' : 'hidden',
+                overflow: 'hidden',
                 ...animatedStyle,
             }}>
             <View onLayout={_measure}>{children || null}</View>
         </Animated.View>
     )
     function setHeight({ value }) {
-        if (value > 0.999999 && storedHeight.current) {
-            knownHeight.setValue(storedHeight.current)
+        if (value > 0.999999 && storedHeight) {
+            knownHeight.setValue(storedHeight)
         }
     }
     function _measure(event) {
         const height = event.nativeEvent.layout.height
-        if (height > storedHeight.current) {
-            storedHeight.current = height
+        if (height > knownHeight.value) {
+            knownHeight.setValue(height)
         }
     }
 }

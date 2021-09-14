@@ -86,6 +86,7 @@ function Congratulations({
     onCompleted = noop,
 }) {
     const { close } = useContext(OverlayContext)
+    console.log('Congratulate')
     useEffect(() => {
         setTimeout(() => {
             close(id)
@@ -113,6 +114,7 @@ export function willCongratulate({
     onCompleted,
     ...props
 }) {
+    console.log('Will Congratulate', name)
     return function () {
         congratulations({ name, icon, animation, onCompleted, ...props })
     }
