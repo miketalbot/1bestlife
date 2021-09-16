@@ -26,7 +26,12 @@ export function setOverlay(overlay) {
 
 const mounting = {
     fromBelowBefore: { translateX: 0, opacity: 0, translateY: -250 },
-    fromBelowAfter: { translateX: 0, translateY: -250, opacity: 0 },
+    fromBelowAfter: {
+        translateX: 0,
+        translateY: -250,
+        opacity: 0,
+        keepHeight: true,
+    },
 }
 
 export function Overlay() {

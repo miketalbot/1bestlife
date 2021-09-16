@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native'
 import { willMakeTask } from './willMakeTask'
 import { animationWithRandomHold } from '../animations/clean'
 import { DoneTask } from './DoneTask'
-import { willComplete } from '../screens/completed'
+import { completed, willComplete } from '../screens/completed'
 
 handle('get-tasks', applyDefaultTasks)
 
@@ -32,6 +32,11 @@ const nameTask = registerTask({
         willComplete({ name: 'Sharing your name' }),
     ],
 })
+
+setTimeout(() => {
+    console.log('Cimplet')
+    completed({ name: 'Test' })
+}, 2000)
 
 registerTask({
     id: 'greet',

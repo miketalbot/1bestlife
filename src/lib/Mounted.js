@@ -5,8 +5,6 @@ import debounce from 'lodash-es/debounce'
 
 let id = 0
 
-export function BMounted({ children, above, ...props }) {}
-
 export function useAnimatedValue(initial = 0) {
     return useRef(new Animated.Value(initial)).current
 }
@@ -92,15 +90,10 @@ function BelowMountable({
     beforeMounted = { translateX: 0, opacity: 0, translateY: 400 },
 }) {
     const mounted = useAnimatedValue(0)
+    const wasMounted = useRef(false)
+    const height = useAnimatedValue(0)
     const knownHeight = useAnimatedValue(600)
-    const [storedHeight, setStoredHeight] = useState(0)
     const transition = useAnimatedValue(1)
-
-    useEffect(() => {
-        mounted.addListener(setHeight)
-        return () => mounted.removeListener(setHeight)
-    }, [mounted])
-
     useEffect(() => {
         Animated.timing(transition, {
             toValue: isMounted ? 1 : 0,
@@ -113,15 +106,27 @@ function BelowMountable({
                 easing: Easing.out(Easing.sin),
                 useNativeDriver: false,
             }).start()
+            Animated.timing(height, {
+                toValue:
+                    (wasMounted.current && afterMounted.keepHeight) ||
+                    (!wasMounted.current && isMounted)
+                        ? 1
+                        : 0,
+                duration: 400,
+                easing: Easing.out(Easing.sin),
+                useNativeDriver: false,
+            }).start()
+            wasMounted.current = wasMounted.current || isMounted
         })
     }, [isMounted])
 
     const animatedStyle = {
         opacity: mounted,
+        overflow: 'hidden',
         transform: [
             {
                 translateY: Animated.multiply(
-                    transition,
+                    1,
                     mounted.interpolate({
                         inputRange: [0, 1],
                         outputRange: [
@@ -134,7 +139,7 @@ function BelowMountable({
                 ),
             },
         ],
-        maxHeight: Animated.multiply(mounted, knownHeight),
+        maxHeight: Animated.multiply(height, knownHeight),
     }
 
     return (
@@ -145,15 +150,11 @@ function BelowMountable({
                 overflow: 'hidden',
                 ...animatedStyle,
             }}>
-            <View onLayout={_measure}>{children || null}</View>
+            <View onLayout={measure}>{children || null}</View>
         </Animated.View>
     )
-    function setHeight({ value }) {
-        if (value > 0.999999 && storedHeight) {
-            knownHeight.setValue(storedHeight)
-        }
-    }
-    function _measure(event) {
+
+    function measure(event) {
         const height = event.nativeEvent.layout.height
         if (height > knownHeight.value) {
             knownHeight.setValue(height)

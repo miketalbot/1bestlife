@@ -31,7 +31,7 @@ export function completed({
 
 const styles = StyleSheet.create({
     notificationPanel: {
-        marginTop: 90,
+        marginTop: 50,
         marginLeft: 16,
         marginRight: 16,
         marginBottom: 90,
